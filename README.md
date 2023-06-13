@@ -35,3 +35,19 @@ This module provides functionality for the serial communication:
     - Enable the reception interrupt
 - **Standard Library Function**: 
     - Implement the `putchar` function from the standard library. This function allows redirecting `printf` statements to the USART interface.
+
+### Motor position sensor (encoder) module:
+
+- **Initialization**:
+    * Clears noise in Hall position sensors during startup.
+- **Obtaining position**:
+    - Shifts previous angle samples to make room for new samples.
+    - Reads raw value from the encoder.
+    - Performs linearization using a lookup table and interpolation.
+    - Calculates real angles in radians for single-turn and electrical angle.
+    - Handles rollover of the single-turn angle by comparing the difference with the previous angle
+    - Updates multi-turn position by adding the single-turn angle with the number of turns.
+- **Velocity calculation**:
+    - Calculates velocity based on angle change and elapsed time.
+    - Also calculates electrical velocity.
+
