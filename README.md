@@ -51,3 +51,16 @@ This module provides functionality for the serial communication:
     - Calculates velocity based on angle change and elapsed time.
     - Also calculates electrical velocity.
 
+### Motor driver module
+
+This module control the DRV8323 IC which is a three-phase gate driver for brushless DC (BLDC) motors. It provides the control signals to drive the power MOSFETs that control the motor's phases.
+
+Some important functions are:
+
+- Read fault status registers
+- Configure control registers to set operating parameters (e.g.  motor speed, torque)
+- Enable or disable the gate drive that controls the motor's power stage. This allows for seamless motor startup, shutdown, and control, depending on the operational state.
+- Perform calibration for accurate current sensing. This helps to optimize the motor's performance and efficiency by accurately measuring and regulating the motor's current flow.
+
+
+
