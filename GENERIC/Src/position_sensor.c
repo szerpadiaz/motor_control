@@ -11,15 +11,24 @@
 #include "hw_config.h"
 #include "user_config.h"
 
+uint16_t ps_spi_write(EncoderStruct * encoder, uint16_t val){
+#if 0
+	encoder->spi_tx_word = val;
+	HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_RESET ); 	// CS low
+	HAL_SPI_TransmitReceive(&ENC_SPI, (uint8_t*)encoder->spi_tx_buff, (uint8_t *)encoder->spi_rx_buff, 1, 100);
+	while( ENC_SPI.State == HAL_SPI_STATE_BUSY );  					// wait for transmission complete
+	HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_SET ); 	// CS high
+	return encoder->spi_rx_word;
+#else
+	printf("ENCODER SPI : %x \n\r", val);
+	return 0;
+#endif
+}
 
 void ps_warmup(EncoderStruct * encoder, int n){
 	/* Hall position sensors noisy on startup.  Take a bunch of samples to clear this data */
 	for(int i = 0; i<n; i++){
-		encoder->spi_tx_word = 0x0000;
-		HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_RESET ); 	// CS low
-		HAL_SPI_TransmitReceive(&ENC_SPI, (uint8_t*)encoder->spi_tx_buff, (uint8_t *)encoder->spi_rx_buff, 1, 100);
-		while( ENC_SPI.State == HAL_SPI_STATE_BUSY );  					// wait for transmission complete
-		HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_SET ); 	// CS high
+		ps_spi_write(encoder, 0x0000);
 	}
 }
 
@@ -34,12 +43,7 @@ void ps_sample(EncoderStruct * encoder, float dt){
 	//memmove(&encoder->angle_multiturn[1], &encoder->angle_multiturn[0], (N_POS_SAMPLES-1)*sizeof(float)); // this is much slower for some reason
 
 	/* SPI read/write */
-	encoder->spi_tx_word = ENC_READ_WORD;
-	HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_RESET ); 	// CS low
-	HAL_SPI_TransmitReceive(&ENC_SPI, (uint8_t*)encoder->spi_tx_buff, (uint8_t *)encoder->spi_rx_buff, 1, 100);
-	while( ENC_SPI.State == HAL_SPI_STATE_BUSY );  					// wait for transmission complete
-	HAL_GPIO_WritePin(ENC_CS, GPIO_PIN_SET ); 	// CS high
-	encoder->raw = encoder ->spi_rx_word;
+	encoder->raw = ps_spi_write(encoder, ENC_READ_WORD);
 
 	/* Linearization */
 	int off_1 = encoder->offset_lut[(encoder->raw)>>9];				// lookup table lower entry

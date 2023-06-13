@@ -128,6 +128,8 @@ int main(void)
   comm_encoder.ppairs = PPAIRS;
   ps_warmup(&comm_encoder, 100);			// clear the noisy data when the encoder first turns on
   if(EN_ENC_LINEARIZATION){memcpy(&comm_encoder.offset_lut, &ENCODER_LUT, sizeof(comm_encoder.offset_lut));}	// Copy the linearization lookup table
+
+  printf("Encoder was initialized \r\n");
   /* CAN setup */
   can_rx_init(&can_rx);
   can_tx_init(&can_tx);
