@@ -1,0 +1,31 @@
+.DS_Store
+.metadata
+.settings
+
+# Compiled output\
+*.bin
+*.elf
+*.hex
+*.map
+*.lst
+*.lss
+*.srec
+*.out
+# IDE and tool-specific files\
+#.project\
+#.cproject\
+#.settings/\
+#.vscode/\
+#*.launch\
+#\
+# Build output directories\
+**/Debug/
+**/Release/
+
+# Temporary or generated files\
+*.swp\
+*.swo\
+*.log\
+*.bak\
+
+# Exclude specific files within Drivers/\
