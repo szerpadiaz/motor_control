@@ -62,5 +62,34 @@ Some important functions are:
 - Enable or disable the gate drive that controls the motor's power stage. This allows for seamless motor startup, shutdown, and control, depending on the operational state.
 - Perform calibration for accurate current sensing. This helps to optimize the motor's performance and efficiency by accurately measuring and regulating the motor's current flow.
 
+### Field-Oriented Control (FOC) module
+
+This module  utilizes the Field-Oriented Control technique to regulate torque and speed in three-phase AC motors. The key functions are:
+
+- **Initialization**: 
+  - set up parameters such as gains, scaling factors, and lookup tables.
+- **Command Initialization**: 
+  - set control commands such as position, velocity, gains, and torque to zero.
+- **ADC Offset Measurement**: 
+  - measure ADC offset values to establish a zero current condition.
+- **FOC execution**: 
+  - computing the motor's currents in the DQ coordinate system.
+  - applying proportional-integral (PI) control.
+  - generating suitable PWM signals for commutation.
+- **Duty Cycle Adjustment**: 
+  - adjust duty cycle values for the motor's three phases
+  - inverte the duty cycle and/or swap phase orders.
+- **Current and Voltage Sensing**:
+  - read the current and voltage values from the motor phases using ADC channels.
+- **Coordinate Transformations**: 
+  - convert coordinates between DQ and ABC systems
+- **Space Vector Modulation (SVM)**: 
+  - generate PWM signals for the motor based on the desired voltages for the U, V, and W phases.
+- **Duty Cycle Linearization**: 
+  - linearize the duty cycle using a lookup table.
+- **Field Weakening**: 
+  - control the motor in high-speed regions beyond the base speed.
+- **(Optional) Observer Implementation**: 
+  - estimate resistance and temperature by leveraging the measured current and voltage values.
 
 
