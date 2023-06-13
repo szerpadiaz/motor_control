@@ -179,7 +179,7 @@ int main(void)
   while (1)
   {
 	  HAL_Delay(100);
-	  drv_print_faults(drv);
+	  // drv_print_faults(drv);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
