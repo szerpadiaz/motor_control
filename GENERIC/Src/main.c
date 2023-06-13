@@ -29,9 +29,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "position_sensor.h"
 #include "hw_config.h"
 #include "user_config.h"
 
+#include "math_ops.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,7 +58,12 @@
 
 /* USER CODE BEGIN PV */
 
+/* Flash Registers */
+float __float_reg[64];
+int __int_reg[256];
+
 COMStruct com;
+EncoderStruct comm_encoder;
 CANTxMessage can_tx;
 CANRxMessage can_rx;
 
@@ -115,6 +122,12 @@ int main(void)
 
   printf("\r\nFirmware Version Number \r\n");
 
+  //memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
+  comm_encoder.m_zero = M_ZERO;
+  comm_encoder.e_zero = E_ZERO;
+  comm_encoder.ppairs = PPAIRS;
+  ps_warmup(&comm_encoder, 100);			// clear the noisy data when the encoder first turns on
+  if(EN_ENC_LINEARIZATION){memcpy(&comm_encoder.offset_lut, &ENCODER_LUT, sizeof(comm_encoder.offset_lut));}	// Copy the linearization lookup table
   /* CAN setup */
   can_rx_init(&can_rx);
   can_tx_init(&can_tx);
