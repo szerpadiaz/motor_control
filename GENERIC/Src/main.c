@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -107,6 +108,9 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_CAN1_Init();
+  MX_SPI1_Init();
+  MX_SPI3_Init();
+
   /* USER CODE BEGIN 2 */
 
   printf("\r\nFirmware Version Number \r\n");
