@@ -33,6 +33,7 @@
 #include "hw_config.h"
 #include "user_config.h"
 
+#include "drv8323.h"
 #include "math_ops.h"
 /* USER CODE END Includes */
 
@@ -64,6 +65,7 @@ int __int_reg[256];
 
 COMStruct com;
 EncoderStruct comm_encoder;
+DRVStruct drv;
 CANTxMessage can_tx;
 CANRxMessage can_rx;
 
@@ -128,8 +130,34 @@ int main(void)
   comm_encoder.ppairs = PPAIRS;
   ps_warmup(&comm_encoder, 100);			// clear the noisy data when the encoder first turns on
   if(EN_ENC_LINEARIZATION){memcpy(&comm_encoder.offset_lut, &ENCODER_LUT, sizeof(comm_encoder.offset_lut));}	// Copy the linearization lookup table
+  else{memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));}
+  //for(int i = 0; i<128; i++){printf("%d\r\n", comm_encoder.offset_lut[i]);}
 
   printf("Encoder was initialized \r\n");
+  /* DRV8323 setup */
+  HAL_GPIO_WritePin(DRV_CS, GPIO_PIN_SET ); 	// CS high
+  HAL_GPIO_WritePin(ENABLE_PIN, GPIO_PIN_SET );
+  HAL_Delay(1);
+  //drv_calibrate(drv);
+  HAL_Delay(1);
+  drv_write_DCR(drv, 0x0, DIS_GDF_EN, 0x0, PWM_MODE_3X, 0x0, 0x0, 0x0, 0x0, 0x1);
+  HAL_Delay(1);
+  int CSA_GAIN;
+  if(I_MAX <= 40.0f){CSA_GAIN = CSA_GAIN_40;}	// Up to 40A use 40X amplifier gain
+  else{CSA_GAIN = CSA_GAIN_20;}					// From 40-60A use 20X amplifier gain.  (Make this generic in the future)
+  drv_write_CSACR(drv, 0x0, 0x1, 0x0, CSA_GAIN_40, 0x0, 0x1, 0x1, 0x1, SEN_LVL_0_25);
+  HAL_Delay(1);
+  drv_write_CSACR(drv, 0x0, 0x1, 0x0, CSA_GAIN, 0x1, 0x0, 0x0, 0x0, SEN_LVL_0_25);
+  HAL_Delay(1);
+  //zero_current(&controller);
+  HAL_Delay(1);
+  drv_write_OCPCR(drv, TRETRY_50US, DEADTIME_50NS, OCP_RETRY, OCP_DEG_4US, VDS_LVL_0_45);
+  HAL_Delay(1);
+  drv_disable_gd(drv);
+  HAL_Delay(1);
+  //drv_enable_gd(drv);   */
+  //printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
+
   /* CAN setup */
   can_rx_init(&can_rx);
   can_tx_init(&can_tx);
@@ -150,6 +178,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_Delay(100);
+	  drv_print_faults(drv);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
