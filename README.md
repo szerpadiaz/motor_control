@@ -39,7 +39,7 @@ This module provides functionality for the serial communication:
 ### Motor position sensor (encoder) module:
 
 - **Initialization**:
-    * Clears noise in Hall position sensors during startup.
+    * Clears noise data during startup.
 - **Obtaining position**:
     - Shifts previous angle samples to make room for new samples.
     - Reads raw value from the encoder.
