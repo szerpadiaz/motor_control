@@ -19,14 +19,15 @@ The FSM is responsible for managing different states of the motor control system
 - Depending on the state, perform actions when entering and exiting the current state. Those actions perform any necessary setup or cleanup operations associated with the states.
 
 The FSM consists of the following states:
-    - **MENU_MODE**: In this state, the user can select different options from the main menu.
-    - **SETUP_MODE**: In this state, the user can configure various parameters and settings related to the motor control.
-    - **ENCODER_MODE**: This state is used for displaying encoder-related information.
-    - **MOTOR_MODE**: This state represents the motor control mode where the motor is driven and controlled.
-    - **CALIBRATION_MODE**: This state is used for calibrating the encoder.
+  - **MENU_MODE**: In this state, the user can select different options from the main menu.
+  - **SETUP_MODE**: In this state, the user can configure various parameters and settings related to the motor control.
+  - **ENCODER_MODE**: This state is used for displaying encoder-related information.
+  - **MOTOR_MODE**: This state represents the motor control mode where the motor is driven and controlled.
+  - **CALIBRATION_MODE**: This state is used for calibrating the encoder.
 
 The diagram below shows the state actions and transitions.
-![FSM](./documentation/images/FSM.png)
+
+![FSM](./documentation/images/FSM.jpg)
 
 ### Field-Oriented Control (FOC) module
 
