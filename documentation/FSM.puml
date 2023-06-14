@@ -1,0 +1,68 @@
+@startuml
+!theme vibrant
+
+[*] --> MENU_MODE
+
+MENU_MODE --> SETUP_MODE       : SETUP_CMD
+MENU_MODE --> MOTOR_MODE       : MOTOR_CMD
+MENU_MODE --> ENCODER_MODE     : ENCODER_CMD
+MENU_MODE --> CALIBRATION_MODE : CAL_CMD
+
+CALIBRATION_MODE --> [*] : MENU_CMD || DONE
+MOTOR_MODE       --> [*] : MENU_CMD
+SETUP_MODE       --> [*] : MENU_CMD
+ENCODER_MODE     --> [*] : MENU_CMD
+
+MENU_MODE: **Entry**:
+MENU_MODE: - show menu options
+MENU_MODE:
+MENU_MODE: **While running**:
+MENU_MODE: - if ZERO_CMD:
+MENU_MODE: save new zero position to flash
+
+SETUP_MODE --> SETUP_MODE
+SETUP_MODE: **Entry**:
+SETUP_MODE: - Show configuration 
+SETUP_MODE: options
+SETUP_MODE:
+SETUP_MODE: **While running**:
+SETUP_MODE: - Process user's input 
+SETUP_MODE: to set parameters related
+SETUP_MODE: to the motor control
+SETUP_MODE: - Write settings to flash
+
+MOTOR_MODE --> MOTOR_MODE
+MOTOR_MODE: **Entry**:
+MOTOR_MODE: - reset FOC controller 
+MOTOR_MODE: - enable gate drive
+MOTOR_MODE:
+MOTOR_MODE: **While running**:
+MOTOR_MODE: - if CAN times out: 
+MOTOR_MODE: reset controller commands
+MOTOR_MODE: - Otherwise: 
+MOTOR_MODE: do field oriented control
+MOTOR_MODE:
+MOTOR_MODE: **Exit**:
+MOTOR_MODE: - reset FOC controller 
+MOTOR_MODE: - disable gate drive
+
+ENCODER_MODE --> ENCODER_MODE
+ENCODER_MODE:
+ENCODER_MODE: **While running**:
+ENCODER_MODE: - Display encoder-related
+ENCODER_MODE: information 
+
+CALIBRATION_MODE --> CALIBRATION_MODE
+CALIBRATION_MODE: **Entry**:
+CALIBRATION_MODE: - clear cal. data  
+CALIBRATION_MODE: - enable gate drive
+CALIBRATION_MODE: 
+CALIBRATION_MODE: **While running**:
+CALIBRATION_MODE: - order phases
+CALIBRATION_MODE: - calibrate encoder
+CALIBRATION_MODE: - when DONE: 
+CALIBRATION_MODE: write new settings to flash
+CALIBRATION_MODE: 
+CALIBRATION_MODE: **Exit**:
+CALIBRATION_MODE: - disable gate drive
+@enduml

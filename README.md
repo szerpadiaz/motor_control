@@ -93,3 +93,20 @@ This module  utilizes the Field-Oriented Control technique to regulate torque an
   - estimate resistance and temperature by leveraging the measured current and voltage values.
 
 
+### The Finite State Machine (FSM) module
+
+The FSM is responsible for managing different states of the motor control system and transitioning between them based on certain conditions.
+
+- Manages the state transitions based on the current state and the input signals (e.g. serial-terminal input, CAN input, and other triggrers). 
+- Depending on the state, perform actions when entering and exiting the current state. Those actions perform any necessary setup or cleanup operations associated with the states.
+
+The FSM consists of the following states:
+    - **MENU_MODE**: In this state, the user can select different options from the main menu.
+    - **SETUP_MODE**: In this state, the user can configure various parameters and settings related to the motor control.
+    - **ENCODER_MODE**: This state is used for displaying encoder-related information.
+    - **MOTOR_MODE**: This state represents the motor control mode where the motor is driven and controlled.
+    - **CALIBRATION_MODE**: This state is used for calibrating the encoder.
+
+The diagram below shows the state actions and transitions.
+![FSM](./documentation/images/FSM.png)
+
