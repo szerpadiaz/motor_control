@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "can.h"
 #include "spi.h"
 #include "usart.h"
@@ -119,7 +120,9 @@ int main(void)
   MX_CAN1_Init();
   MX_SPI1_Init();
   MX_SPI3_Init();
-
+  MX_ADC1_Init();
+  MX_ADC2_Init();
+  MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
 
   printf("\r\nFirmware Version Number \r\n");
@@ -134,6 +137,9 @@ int main(void)
   //for(int i = 0; i<128; i++){printf("%d\r\n", comm_encoder.offset_lut[i]);}
 
   printf("Encoder was initialized \r\n");
+  HAL_ADC_Start(&hadc1);
+  HAL_ADC_Start(&hadc2);
+  HAL_ADC_Start(&hadc3);
   /* DRV8323 setup */
   HAL_GPIO_WritePin(DRV_CS, GPIO_PIN_SET ); 	// CS high
   HAL_GPIO_WritePin(ENABLE_PIN, GPIO_PIN_SET );
