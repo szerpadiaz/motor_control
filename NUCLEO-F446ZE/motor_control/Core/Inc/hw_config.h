@@ -79,7 +79,6 @@
 #define Q_INT_LIM V_BUS/(K_Q*KI_Q)  // Amps*samples
 
 #define USARTx  USART3
-#define USART_H huart3
 #define USART_TX_Pin GPIO_PIN_8
 #define USART_RX_Pin GPIO_PIN_9
 #define USART_GPIO_Port GPIOD

@@ -249,7 +249,7 @@ void CAN1_RX0_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	HAL_UART_IRQHandler(&USART_H);
+	HAL_UART_IRQHandler(&huart);
 
 	char c = Serial2RxBuffer[0];
 	printf("\r\n Got cmd '%c', updating FSM ... \n\r", c);
@@ -259,7 +259,7 @@ void USART3_IRQHandler(void)
 	//update_fsm(&state, c);
 
   /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&USART_H);
+  HAL_UART_IRQHandler(&huart);
   /* USER CODE BEGIN USART1_IRQn 1 */
   /* USER CODE END USART1_IRQn 1 */
 }

@@ -25,7 +25,7 @@
 
 /* USER CODE END 0 */
 
-UART_HandleTypeDef USART_H;
+UART_HandleTypeDef huart;
 
 
 /* USART1 init function */
@@ -40,15 +40,15 @@ void MX_USARTx_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 1 */
 
   /* USER CODE END USART1_Init 1 */
-  USART_H.Instance = USARTx;
-  USART_H.Init.BaudRate = 9600;
-  USART_H.Init.WordLength = UART_WORDLENGTH_8B;
-  USART_H.Init.StopBits = UART_STOPBITS_1;
-  USART_H.Init.Parity = UART_PARITY_NONE;
-  USART_H.Init.Mode = UART_MODE_TX_RX;
-  USART_H.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  USART_H.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&USART_H) != HAL_OK)
+  huart.Instance = USARTx;
+  huart.Init.BaudRate = 9600;
+  huart.Init.WordLength = UART_WORDLENGTH_8B;
+  huart.Init.StopBits = UART_STOPBITS_1;
+  huart.Init.Parity = UART_PARITY_NONE;
+  huart.Init.Mode = UART_MODE_TX_RX;
+  huart.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart) != HAL_OK)
   {
     Error_Handler();
   }
@@ -119,14 +119,14 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 int __io_putchar(int ch) {
-HAL_UART_Transmit(&USART_H, (uint8_t*)&ch, 1, 0xffff);
+HAL_UART_Transmit(&huart, (uint8_t*)&ch, 1, 0xffff);
 return 0;
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart_p)
 {
   /* Prevent unused argument(s) compilation warning */
-	HAL_UART_Receive_IT(&USART_H, (uint8_t *)Serial2RxBuffer, 1);
+	HAL_UART_Receive_IT(&huart, (uint8_t *)Serial2RxBuffer, 1);
   /* NOTE: This function should not be modified, when the callback is needed,
            the HAL_UART_RxCpltCallback could be implemented in the user file
    */

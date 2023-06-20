@@ -26,12 +26,12 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "hw_config.h"
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-extern UART_HandleTypeDef USART_H;
+extern UART_HandleTypeDef huart;
 
 /* USER CODE BEGIN Private defines */
 extern uint8_t Serial2RxBuffer[1];
@@ -42,7 +42,7 @@ void MX_USARTx_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 int __io_putchar(int ch);
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart_p);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

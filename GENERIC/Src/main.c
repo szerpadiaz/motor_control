@@ -170,7 +170,7 @@ int main(void)
 
 
   /* Turn on interrupts */
-  HAL_UART_Receive_IT(&USART_H, (uint8_t *)Serial2RxBuffer, 1);
+  HAL_UART_Receive_IT(&huart, (uint8_t *)Serial2RxBuffer, 1);
 
   /* USER CODE END 2 */
 
