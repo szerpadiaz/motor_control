@@ -41,6 +41,8 @@
 #define CAN_TX_Pin GPIO_PIN_1
 #define CAN_RX_Pin GPIO_PIN_0
 #define CAN_GPIO_Port GPIOD
+#define CAN_CLK_ENABLE() __HAL_RCC_CAN1_CLK_ENABLE()
+#define CAN_GPIO_ENABLE() __HAL_RCC_GPIOD_CLK_ENABLE();
 
 /* SPI */
 #define SPI1_SCK_Pin GPIO_PIN_5
