@@ -27,7 +27,7 @@ The FSM consists of the following states:
 
 The diagram below shows the state actions and transitions.
 
-![FSM](./documentation/images/FSM.jpg)
+![FSM](./documentation/images/FSM.png)
 
 ### Field-Oriented Control (FOC) module
 
