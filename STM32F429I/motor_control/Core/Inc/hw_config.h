@@ -41,6 +41,18 @@
 #define CAN_TX_Pin GPIO_PIN_11
 #define CAN_RX_Pin GPIO_PIN_12
 #define CAN_GPIO_Port GPIOA
+#define CAN_CLK_ENABLE() __HAL_RCC_CAN1_CLK_ENABLE()
+#define CAN_GPIO_ENABLE() __HAL_RCC_GPIOA_CLK_ENABLE();
+/* SPI */
+#define SPI1_SCK_Pin GPIO_PIN_5
+#define SPI1_MISO_Pin GPIO_PIN_6
+#define SPI1_MOSI_Pin GPIO_PIN_7
+#define SPI1_Port GPIOA
+
+#define SPI3_SCK_Pin GPIO_PIN_10
+#define SPI3_MISO_Pin GPIO_PIN_11
+#define SPI3_MOSI_Pin GPIO_PIN_12
+#define SPI3_Port GPIOC
 
 /* Other hardware-related constants */
 #define I_SCALE 			0.0201416f  // Amps per A/D Count at 40X amplifier gain
@@ -67,9 +79,14 @@
 #define D_INT_LIM V_BUS/(K_D*KI_D)  // Amps*samples
 #define Q_INT_LIM V_BUS/(K_Q*KI_Q)  // Amps*samples
 
+#define USARTx  USART1
 #define USART_TX_Pin GPIO_PIN_9
-#define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_10
-#define USART_RX_GPIO_Port GPIOA
+#define USART_GPIO_Port GPIOA
+#define USARTx_CLK_ENABLE()  __HAL_RCC_USART1_CLK_ENABLE()
+#define USARTx_CLK_DISABLE()  __HAL_RCC_USART1_CLK_DISABLE()
+#define USARTx_GPIO_ENABLE() __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USARTx_IRQ USART1_IRQn
+#define USARTx_AF GPIO_AF7_USART1
 
 #endif
