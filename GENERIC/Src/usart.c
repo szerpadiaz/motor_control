@@ -25,11 +25,12 @@
 
 /* USER CODE END 0 */
 
-UART_HandleTypeDef huart1;
+UART_HandleTypeDef USART_H;
+
 
 /* USART1 init function */
 
-void MX_USART1_UART_Init(void)
+void MX_USARTx_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART1_Init 0 */
@@ -39,15 +40,15 @@ void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 1 */
 
   /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
+  USART_H.Instance = USARTx;
+  USART_H.Init.BaudRate = 9600;
+  USART_H.Init.WordLength = UART_WORDLENGTH_8B;
+  USART_H.Init.StopBits = UART_STOPBITS_1;
+  USART_H.Init.Parity = UART_PARITY_NONE;
+  USART_H.Init.Mode = UART_MODE_TX_RX;
+  USART_H.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  USART_H.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&USART_H) != HAL_OK)
   {
     Error_Handler();
   }
@@ -61,15 +62,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(uartHandle->Instance==USART1)
+  if(uartHandle->Instance==USARTx)
   {
   /* USER CODE BEGIN USART1_MspInit 0 */
 
   /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
-    __HAL_RCC_USART1_CLK_ENABLE();
+	USARTx_CLK_ENABLE();
+	USARTx_GPIO_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+
     /**USART1 GPIO Configuration
     PA2     ------> USART1_TX
     PA3     ------> USART1_RX
@@ -78,12 +80,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = USARTx_AF;
+    HAL_GPIO_Init(USART_GPIO_Port, &GPIO_InitStruct);
 
     /* USART1 interrupt Init */
-    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
+    HAL_NVIC_SetPriority(USARTx_IRQ, 0, 0);
+    HAL_NVIC_EnableIRQ(USARTx_IRQ);
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
@@ -93,22 +95,22 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 {
 
-  if(uartHandle->Instance==USART1)
+  if(uartHandle->Instance==USARTx)
   {
   /* USER CODE BEGIN USART1_MspDeInit 0 */
 
   /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
-    __HAL_RCC_USART1_CLK_DISABLE();
+	 USARTx_CLK_DISABLE();
 
     /**USART1 GPIO Configuration
     PA2     ------> USART1_TX
     PA3     ------> USART1_RX
     */
-    HAL_GPIO_DeInit(GPIOA, USART_TX_Pin|USART_RX_Pin);
+    HAL_GPIO_DeInit(USART_GPIO_Port, USART_TX_Pin|USART_RX_Pin);
 
     /* USART1 interrupt Deinit */
-    HAL_NVIC_DisableIRQ(USART1_IRQn);
+    HAL_NVIC_DisableIRQ(USARTx_IRQ);
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
@@ -117,14 +119,14 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 int __io_putchar(int ch) {
-HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 0xffff);
+HAL_UART_Transmit(&USART_H, (uint8_t*)&ch, 1, 0xffff);
 return 0;
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   /* Prevent unused argument(s) compilation warning */
-	HAL_UART_Receive_IT(&huart1, (uint8_t *)Serial2RxBuffer, 1);
+	HAL_UART_Receive_IT(&USART_H, (uint8_t *)Serial2RxBuffer, 1);
   /* NOTE: This function should not be modified, when the callback is needed,
            the HAL_UART_RxCpltCallback could be implemented in the user file
    */

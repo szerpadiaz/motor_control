@@ -115,7 +115,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
+  MX_USARTx_UART_Init();
   MX_CAN1_Init();
   MX_SPI1_Init();
   MX_SPI3_Init();
