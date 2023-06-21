@@ -250,6 +250,33 @@ void CAN1_RX0_IRQHandler(void)
   /* USER CODE END CAN1_RX0_IRQn 1 */
 }
 
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
+	//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );	// Useful for timing
+	printf("\r\n TIM1 ... \n\r");
+	/* Sample ADCs */
+	//analog_sample(&controller);
+
+	/* Sample position sensor */
+	//ps_sample(&comm_encoder, DT);
+
+	/* Run Finite State Machine */
+	//run_fsm(&state);
+
+	/* Check for CAN messages */
+	//can_tx_rx();
+
+	/* increment loop count */
+	//controller.loop_count++;
+	//HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
+
+  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
