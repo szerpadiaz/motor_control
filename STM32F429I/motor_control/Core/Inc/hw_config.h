@@ -21,6 +21,21 @@
 #define ADC_CH_IC		0				// Phase C current sense ADC channel handle.  0 = unused
 #define ADC_CH_VBUS		hadc3				// Bus voltage ADC channel handle.  0 = unused
 
+#define ADC1_CHANNEL       ADC_CHANNEL_13
+#define ADC1_Pin           GPIO_PIN_3
+#define ADC1_Port          GPIOC
+#define ADC1_GPIO_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
+
+#define ADC2_CHANNEL       ADC_CHANNEL_10
+#define ADC2_Pin           GPIO_PIN_0                   //CHANNEL 5 is in CONFLICT WITH SPI1 CLK!! channel10 is in conflict with the SDNWE of FMC
+#define ADC2_Port          GPIOC
+#define ADC2_GPIO_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
+
+#define ADC3_CHANNEL       ADC_CHANNEL_4
+#define ADC3_Pin           GPIO_PIN_6
+#define ADC3_Port          GPIOF
+#define ADC3_GPIO_ENABLE() __HAL_RCC_GPIOF_CLK_ENABLE()
+
 /* DRV Gate drive */
 #define ENABLE_PIN 		GPIOA, GPIO_PIN_11  // Enable gate drive pin. (FIX, cannot be same as CAN!)
 #define DRV_SPI			hspi1				// DRV SPI handle
