@@ -9,6 +9,16 @@
 #define TIM_CH_W		TIM_CHANNEL_3		// Terminal W timer channel
 #define INVERT_DTC		1					// PWM inverting (1) or non-inverting (0)
 
+#define TIMx TIM1
+#define TIMx_CLK_ENABLE()  __HAL_RCC_TIM1_CLK_ENABLE()
+#define TIMx_CLK_DISABLE()  __HAL_RCC_TIM1_CLK_DISABLE()
+#define TIMx_GPIO_ENABLE() __HAL_RCC_GPIOE_CLK_ENABLE()
+#define TIMx_PORT GPIOE
+#define TIMx_GPIO_AF GPIO_AF1_TIM1
+#define TIM_CH_U_Pin GPIO_PIN_8
+#define TIM_CH_V_Pin GPIO_PIN_11
+#define TIM_CH_W_Pin GPIO_PIN_13
+
 /* ISRs */
 #define PWM_ISR			TIM1_UP_TIM10_IRQn	// PWM Timer ISR
 #define CAN_ISR			CAN1_RX0_IRQn		// CAN Receive ISR

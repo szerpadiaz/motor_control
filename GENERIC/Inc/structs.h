@@ -15,7 +15,7 @@
 #include "spi.h"
 #include "gpio.h"
 #include "adc.h"
-//#include "tim.h"
+#include "tim.h"
 #include "position_sensor.h"
 //#include "preference_writer.h"
 //#include "fsm.h"

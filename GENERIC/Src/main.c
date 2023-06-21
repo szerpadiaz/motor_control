@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "can.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -117,6 +118,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USARTx_UART_Init();
+  MX_TIM1_Init();
   MX_CAN1_Init();
   MX_SPI1_Init();
   MX_SPI3_Init();
@@ -164,6 +166,11 @@ int main(void)
   //drv_enable_gd(drv);   */
   //printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
 
+  /* Turn on PWM */
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+
   /* CAN setup */
   can_rx_init(&can_rx);
   can_tx_init(&can_tx);
@@ -171,12 +178,13 @@ int main(void)
   //__HAL_CAN_ENABLE_IT(&CAN_H, CAN_IT_RX_FIFO0_MSG_PENDING); // Start can interrupt
 
   /* Set Interrupt Priorities */
-  //HAL_NVIC_SetPriority(PWM_ISR, 0x0,0x0); // commutation > communication
+  HAL_NVIC_SetPriority(PWM_ISR, 0x0,0x0); // commutation > communication
   HAL_NVIC_SetPriority(CAN_ISR, 0x01, 0x01); //check priority?
 
 
   /* Turn on interrupts */
   HAL_UART_Receive_IT(&huart, (uint8_t *)Serial2RxBuffer, 1);
+  HAL_TIM_Base_Start_IT(&htim1);
 
   /* USER CODE END 2 */
 
@@ -269,7 +277,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
