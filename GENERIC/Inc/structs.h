@@ -20,7 +20,7 @@
 //#include "preference_writer.h"
 //#include "fsm.h"
 #include "drv8323.h"
-//#include "foc.h"
+#include "foc.h"
 //#include "calibration.h"
 #include "can.h"
 
@@ -32,7 +32,7 @@ typedef struct{
 
 
 /* Global Structs */
-//extern ControllerStruct controller;
+extern ControllerStruct controller;
 //extern ObserverStruct observer;
 extern COMStruct com;
 //extern FSMStruct state;

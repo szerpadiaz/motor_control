@@ -28,6 +28,7 @@
 #include "spi.h"
 #include "gpio.h"
 #include "adc.h"
+#include "foc.h"
 #include "can.h"
 #include "position_sensor.h"
 #include "hw_config.h"
@@ -252,7 +253,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
 	//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );	// Useful for timing
-	printf("\r\n TIM1 ... \n\r");
+	//printf("\r\n TIM1 ... \n\r");
 	/* Sample ADCs */
 	//analog_sample(&controller);
 

@@ -36,6 +36,7 @@
 #include "user_config.h"
 
 #include "drv8323.h"
+#include "foc.h"
 #include "math_ops.h"
 /* USER CODE END Includes */
 
@@ -65,6 +66,8 @@
 float __float_reg[64];
 int __int_reg[256];
 
+ControllerStruct controller;
+ObserverStruct observer;
 COMStruct com;
 EncoderStruct comm_encoder;
 DRVStruct drv;
@@ -129,6 +132,15 @@ int main(void)
 
   printf("\r\nFirmware Version Number \r\n");
 
+  /* Controller Setup */
+  if(PHASE_ORDER){							// Timer channel to phase mapping
+
+  }
+  else{
+
+  }
+
+  init_controller_params(&controller);
   //memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
   comm_encoder.m_zero = M_ZERO;
   comm_encoder.e_zero = E_ZERO;
