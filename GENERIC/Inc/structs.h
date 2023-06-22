@@ -18,7 +18,7 @@
 #include "tim.h"
 #include "position_sensor.h"
 //#include "preference_writer.h"
-//#include "fsm.h"
+#include "fsm.h"
 #include "drv8323.h"
 #include "foc.h"
 //#include "calibration.h"
@@ -33,9 +33,9 @@ typedef struct{
 
 /* Global Structs */
 extern ControllerStruct controller;
-//extern ObserverStruct observer;
+extern ObserverStruct observer;
 extern COMStruct com;
-//extern FSMStruct state;
+extern FSMStruct state;
 extern EncoderStruct comm_encoder;
 extern DRVStruct drv;
 //extern PreferenceWriter prefs;

@@ -34,7 +34,7 @@
 #include "position_sensor.h"
 #include "hw_config.h"
 #include "user_config.h"
-
+#include "fsm.h"
 #include "drv8323.h"
 #include "foc.h"
 #include "math_ops.h"
@@ -69,6 +69,7 @@ int __int_reg[256];
 ControllerStruct controller;
 ObserverStruct observer;
 COMStruct com;
+FSMStruct state;
 EncoderStruct comm_encoder;
 DRVStruct drv;
 CANTxMessage can_tx;
@@ -129,6 +130,10 @@ int main(void)
   MX_ADC2_Init();
   MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
+
+  CAN_ID = 1;
+  CAN_MASTER = 0;
+  CAN_TIMEOUT = 1000;
 
   printf("\r\nFirmware Version Number \r\n");
 
@@ -193,6 +198,10 @@ int main(void)
   HAL_NVIC_SetPriority(PWM_ISR, 0x0,0x0); // commutation > communication
   HAL_NVIC_SetPriority(CAN_ISR, 0x01, 0x01); //check priority?
 
+  /* Start the FSM */
+  state.state = INIT_TEMP_MODE;
+  state.next_state = MENU_MODE;
+  state.ready = 1;
 
   /* Turn on interrupts */
   HAL_UART_Receive_IT(&huart, (uint8_t *)Serial2RxBuffer, 1);

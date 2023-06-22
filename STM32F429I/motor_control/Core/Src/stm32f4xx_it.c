@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "structs.h"
 #include "usart.h"
+#include "fsm.h"
 #include "spi.h"
 #include "gpio.h"
 #include "adc.h"
@@ -263,7 +264,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	//ps_sample(&comm_encoder, DT);
 
 	/* Run Finite State Machine */
-	//run_fsm(&state);
+	run_fsm(&state);
 
 	/* Check for CAN messages */
 	//can_tx_rx();
@@ -286,9 +287,9 @@ void USART1_IRQHandler(void)
 	char c = Serial2RxBuffer[0];
 	printf("\r\n Got cmd '%c', updating FSM ... \n\r", c);
 
-	can_tx_rx();
+	//can_tx_rx();
 
-	//update_fsm(&state, c);
+	update_fsm(&state, c);
 
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart);
