@@ -38,17 +38,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "stm32f4xx_flash.h"
-#include "flash_writer.h"
+//#include "stm32f4xx_flash.h"
+//#include "flash_writer.h"
 #include "position_sensor.h"
-#include "preference_writer.h"
+//#include "preference_writer.h"
 #include "hw_config.h"
 #include "user_config.h"
 #include "fsm.h"
 #include "drv8323.h"
 #include "foc.h"
 #include "math_ops.h"
-#include "calibration.h"
+//#include "calibration.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,9 +75,9 @@
 /* Flash Registers */
 float __float_reg[64];
 int __int_reg[256];
-PreferenceWriter prefs;
+//PreferenceWriter prefs;
 
-int count = 0;
+//int count = 0;
 
 /* Structs for control, etc */
 
@@ -87,13 +87,13 @@ COMStruct com;
 FSMStruct state;
 EncoderStruct comm_encoder;
 DRVStruct drv;
-CalStruct comm_encoder_cal;
+//CalStruct comm_encoder_cal;
 CANTxMessage can_tx;
 CANRxMessage can_rx;
 
 /* init but don't allocate calibration arrays */
-int *error_array = NULL;
-int *lut_array = NULL;
+//int *error_array = NULL;
+//int *lut_array = NULL;
 
 uint8_t Serial2RxBuffer[1];
 
@@ -152,33 +152,37 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Load settings from flash */
-  preference_writer_init(&prefs, 6);
-  preference_writer_load(prefs);
+  //preference_writer_init(&prefs, 6);
+  //preference_writer_load(prefs);
 
   /* Sanitize configs in case flash is empty*/
-  if(E_ZERO==-1){E_ZERO = 0;}
-  if(M_ZERO==-1){M_ZERO = 0;}
-  if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
-  if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
-  if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
-  if(CAN_ID==-1){CAN_ID = 1;}
-  if(CAN_MASTER==-1){CAN_MASTER = 0;}
-  if(CAN_TIMEOUT==-1){CAN_TIMEOUT = 1000;}
-  if(isnan(R_NOMINAL) || R_NOMINAL==-1){R_NOMINAL = 0.0f;}
-  if(isnan(TEMP_MAX) || TEMP_MAX==-1){TEMP_MAX = 125.0f;}
-  if(isnan(I_MAX_CONT) || I_MAX_CONT==-1){I_MAX_CONT = 14.0f;}
-  if(isnan(I_CAL)||I_CAL==-1){I_CAL = 5.0f;}
-  if(isnan(PPAIRS) || PPAIRS==-1){PPAIRS = 21.0f;}
-  if(isnan(GR) || GR==-1){GR = 1.0f;}
-  if(isnan(KT) || KT==-1){KT = 1.0f;}
-  if(isnan(KP_MAX) || KP_MAX==-1){KP_MAX = 500.0f;}
-  if(isnan(KD_MAX) || KD_MAX==-1){KD_MAX = 5.0f;}
-  if(isnan(P_MAX)){P_MAX = 12.5f;}
-  if(isnan(P_MIN)){P_MIN = -12.5f;}
-  if(isnan(V_MAX)){V_MAX = 65.0f;}
-  if(isnan(V_MIN)){V_MIN = -65.0f;}
+  //if(E_ZERO==-1){E_ZERO = 0;}
+  //if(M_ZERO==-1){M_ZERO = 0;}
+  //if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
+  //if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
+  //if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
+  //if(CAN_ID==-1){CAN_ID = 1;}
+  //if(CAN_MASTER==-1){CAN_MASTER = 0;}
+  //if(CAN_TIMEOUT==-1){CAN_TIMEOUT = 1000;}
+  //if(isnan(R_NOMINAL) || R_NOMINAL==-1){R_NOMINAL = 0.0f;}
+  //if(isnan(TEMP_MAX) || TEMP_MAX==-1){TEMP_MAX = 125.0f;}
+  //if(isnan(I_MAX_CONT) || I_MAX_CONT==-1){I_MAX_CONT = 14.0f;}
+  //if(isnan(I_CAL)||I_CAL==-1){I_CAL = 5.0f;}
+  //if(isnan(PPAIRS) || PPAIRS==-1){PPAIRS = 21.0f;}
+  //if(isnan(GR) || GR==-1){GR = 1.0f;}
+  //if(isnan(KT) || KT==-1){KT = 1.0f;}
+  //if(isnan(KP_MAX) || KP_MAX==-1){KP_MAX = 500.0f;}
+  //if(isnan(KD_MAX) || KD_MAX==-1){KD_MAX = 5.0f;}
+  //if(isnan(P_MAX)){P_MAX = 12.5f;}
+  //if(isnan(P_MIN)){P_MIN = -12.5f;}
+  //if(isnan(V_MAX)){V_MAX = 65.0f;}
+  //if(isnan(V_MIN)){V_MIN = -65.0f;}
 
-  printf("\r\nFirmware Version Number: %.2f\r\n", VERSION_NUM);
+  CAN_ID = 1;
+  CAN_MASTER = 0;
+  CAN_TIMEOUT = 1000;
+  
+  //printf("\r\nFirmware Version Number: %.2f\r\n", VERSION_NUM);
 
   /* Controller Setup */
   if(PHASE_ORDER){							// Timer channel to phase mapping
@@ -191,7 +195,7 @@ int main(void)
   init_controller_params(&controller);
 
   /* calibration "encoder" zeroing */
-  memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
+  //memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
 
   /* commutation encoder setup */
   comm_encoder.m_zero = M_ZERO;
@@ -203,6 +207,7 @@ int main(void)
   else{memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));}
   //for(int i = 0; i<128; i++){printf("%d\r\n", comm_encoder.offset_lut[i]);}
 
+  printf("Encoder was initialized \r\n");
   /* Turn on ADCs */
   HAL_ADC_Start(&hadc1);
   HAL_ADC_Start(&hadc2);
@@ -223,14 +228,14 @@ int main(void)
   HAL_Delay(1);
   drv_write_CSACR(drv, 0x0, 0x1, 0x0, CSA_GAIN, 0x1, 0x0, 0x0, 0x0, SEN_LVL_0_25);
   HAL_Delay(1);
-  zero_current(&controller);
+  //zero_current(&controller);
   HAL_Delay(1);
   drv_write_OCPCR(drv, TRETRY_50US, DEADTIME_50NS, OCP_RETRY, OCP_DEG_4US, VDS_LVL_0_45);
   HAL_Delay(1);
   drv_disable_gd(drv);
   HAL_Delay(1);
   //drv_enable_gd(drv);   */
-  printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
+  //printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
 
   /* Turn on PWM */
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -248,7 +253,9 @@ int main(void)
   HAL_NVIC_SetPriority(CAN_ISR, 0x01, 0x01);
 
   /* Start the FSM */
-  state.state = MENU_MODE;
+  
+  state.state = INIT_TEMP_MODE;
+  //state.state = MENU_MODE;
   state.next_state = MENU_MODE;
   state.ready = 1;
 
@@ -265,7 +272,7 @@ int main(void)
   {
 
 	  HAL_Delay(100);
-	  drv_print_faults(drv);
+	  //drv_print_faults(drv);
 	 // if(state.state==MOTOR_MODE){
 	  	  //printf("%.2f %.2f %.2f %.2f %.2f\r\n", controller.p_des, controller.v_des, controller.kp, controller.kd, controller.t_ff);
 	  //}

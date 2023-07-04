@@ -41,7 +41,7 @@ void MX_CAN1_Init(void)
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 3;
-  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.Mode = CAN_MODE_LOOPBACK; // CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_12TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
@@ -122,14 +122,18 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 /* USER CODE BEGIN 1 */
 
 void can_rx_init(CANRxMessage *msg){
-	msg->filter.FilterFIFOAssignment=CAN_FILTER_FIFO0; 	// set fifo assignment
+	msg->filter.FilterFIFOAssignment= CAN_FILTER_FIFO0; 	// set fifo assignment: CAN_RX_FIFO0, CAN_FILTER_FIFO0
 	msg->filter.FilterIdHigh=CAN_ID<<5; 				// CAN ID
-	msg->filter.FilterIdLow=0x0;
-	msg->filter.FilterMaskIdHigh=0xFFF;
-	msg->filter.FilterMaskIdLow=0;
+	msg->filter.FilterIdLow=0x0000;
+	msg->filter.FilterMaskIdHigh=0x0000, // 0xFFF, 0x0000
+	msg->filter.FilterMaskIdLow=0x0000;
 	msg->filter.FilterMode = CAN_FILTERMODE_IDMASK;
 	msg->filter.FilterScale=CAN_FILTERSCALE_32BIT;
 	msg->filter.FilterActivation=ENABLE;
+
+	//msg->filter.FilterBank=0;
+	//msg->filter.SlaveStartFilterBank=14;
+
 	HAL_CAN_ConfigFilter(&CAN_H, &msg->filter);
 }
 
@@ -152,15 +156,16 @@ void can_tx_init(CANTxMessage *msg){
 /// 3: [velocity[3-0], current[11-8]]
 /// 4: [current[7-0]]
 void pack_reply(CANTxMessage *msg, uint8_t id, float p, float v, float t){
-    int p_int = float_to_uint(p, P_MIN, P_MAX, 16);
-    int v_int = float_to_uint(v, V_MIN, V_MAX, 12);
-    int t_int = float_to_uint(t, -I_MAX*KT*GR, I_MAX*KT*GR, 12);
+    //int p_int = float_to_uint(p, P_MIN, P_MAX, 16);
+    //int v_int = float_to_uint(v, V_MIN, V_MAX, 12);
+    //int t_int = float_to_uint(t, -I_MAX*KT*GR, I_MAX*KT*GR, 12);
+
     msg->data[0] = id;
-    msg->data[1] = p_int>>8;
-    msg->data[2] = p_int&0xFF;
-    msg->data[3] = v_int>>4;
-    msg->data[4] = ((v_int&0xF)<<4) + (t_int>>8);
-    msg->data[5] = t_int&0xFF;
+    msg->data[1] = 1; //p_int>>8;
+    msg->data[2] = 2; //p_int&0xFF;
+    msg->data[3] = 3; //v_int>>4;
+    msg->data[4] = 4; //((v_int&0xF)<<4) + (t_int>>8);
+    msg->data[5] = 5; //t_int&0xFF;
     }
 
 /// CAN Command Packet Structure ///
@@ -180,17 +185,17 @@ void pack_reply(CANTxMessage *msg, uint8_t id, float p, float v, float t){
 /// 6: [kd[3-0], torque[11-8]]
 /// 7: [torque[7-0]]
 void unpack_cmd(CANRxMessage msg, float *commands){// ControllerStruct * controller){
-        int p_int = (msg.data[0]<<8)|msg.data[1];
-        int v_int = (msg.data[2]<<4)|(msg.data[3]>>4);
-        int kp_int = ((msg.data[3]&0xF)<<8)|msg.data[4];
-        int kd_int = (msg.data[5]<<4)|(msg.data[6]>>4);
-        int t_int = ((msg.data[6]&0xF)<<8)|msg.data[7];
+        //int p_int = (msg.data[0]<<8)|msg.data[1];
+        //int v_int = (msg.data[2]<<4)|(msg.data[3]>>4);
+        //int kp_int = ((msg.data[3]&0xF)<<8)|msg.data[4];
+        //int kd_int = (msg.data[5]<<4)|(msg.data[6]>>4);
+        //int t_int = ((msg.data[6]&0xF)<<8)|msg.data[7];
 
-        commands[0] = uint_to_float(p_int, P_MIN, P_MAX, 16);
-        commands[1] = uint_to_float(v_int, V_MIN, V_MAX, 12);
-        commands[2] = uint_to_float(kp_int, KP_MIN, KP_MAX, 12);
-        commands[3] = uint_to_float(kd_int, KD_MIN, KD_MAX, 12);
-        commands[4] = uint_to_float(t_int, -I_MAX*KT*GR, I_MAX*KT*GR, 12);
+        commands[0] = uint_to_float(msg.data[0], 0, 1, 16); // uint_to_float(p_int, P_MIN, P_MAX, 16);
+        commands[1] = uint_to_float(msg.data[1], 0, 1, 16); // uint_to_float(v_int, V_MIN, V_MAX, 12);
+        commands[2] = uint_to_float(msg.data[2], 0, 1, 16); // uint_to_float(kp_int, KP_MIN, KP_MAX, 12);
+        commands[3] = uint_to_float(msg.data[3], 0, 1, 16); //  uint_to_float(kd_int, KD_MIN, KD_MAX, 12);
+        commands[4] = uint_to_float(msg.data[4], 0, 1, 16); // uint_to_float(t_int, -I_MAX*KT*GR, I_MAX*KT*GR, 12);
     //printf("Received   ");
     //printf("%.3f  %.3f  %.3f  %.3f  %.3f   %.3f", controller->p_des, controller->v_des, controller->kp, controller->kd, controller->t_ff, controller->i_q_ref);
     //printf("\n\r");

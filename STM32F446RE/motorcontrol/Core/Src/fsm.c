@@ -35,6 +35,7 @@
 			 break;
 
 		 case CALIBRATION_MODE:
+			 /**
 			 if(!comm_encoder_cal.done_ordering){
 				 order_phases(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
@@ -42,7 +43,7 @@
 				 calibrate_encoder(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
 			 else{
-				 /* Exit calibration mode when done */
+				 // Exit calibration mode when done
 				 //for(int i = 0; i<128*PPAIRS; i++){printf("%d\r\n", error_array[i]);}
 				 E_ZERO = comm_encoder_cal.ezero;
 				 printf("E_ZERO: %d  %f\r\n", E_ZERO, TWO_PI_F*fmodf((comm_encoder.ppairs*(float)(-E_ZERO))/((float)ENC_CPR), 1.0f));
@@ -55,21 +56,23 @@
 				 preference_writer_load(prefs);
 				 update_fsm(fsmstate, MENU_CMD);
 			 }
-
+			**/
 			 break;
 
 		 case MOTOR_MODE:
-			 /* If CAN has timed out, reset all commands */
+		 /**
+			 // If CAN has timed out, reset all commands
 			 if((CAN_TIMEOUT > 0 ) && (controller.timeout > CAN_TIMEOUT)){
 				 zero_commands(&controller);
 			 }
-			 /* Otherwise, commutate */
+			 // Otherwise, commutate
 			 else{
 				 torque_control(&controller);
 				 field_weaken(&controller);
 				 commutate(&controller, &comm_encoder);
 			 }
 			 controller.timeout ++;
+		*/
 			 break;
 
 		 case SETUP_MODE:
@@ -91,33 +94,34 @@
 
 		switch(fsmstate->state){
 				case MENU_MODE:
-				//printf("Entering Main Menu\r\n");
+				printf("Entering Main Menu\r\n");
 				enter_menu_state();
 				break;
 			case SETUP_MODE:
-				//printf("Entering Setup\r\n");
+				printf("Entering Setup\r\n");
 				enter_setup_state();
 				break;
 			case ENCODER_MODE:
-				//printf("Entering Encoder Mode\r\n");
+				printf("Entering Encoder Mode\r\n");
 				break;
 			case MOTOR_MODE:
-
-				//printf("Entering Motor Mode\r\n");
-				HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
-				reset_foc(&controller);
-				drv_enable_gd(drv);
+				printf("Entering Motor Mode (CURRENTLY DISABLED!)\r\n");
+				//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
+				//reset_foc(&controller);
+				//drv_enable_gd(drv);
 				break;
 			case CALIBRATION_MODE:
-				//printf("Entering Calibration Mode\r\n");
+				printf("Entering Calibration Mode (CURRENTLY DISABLED!)\r\n");
 				/* zero out all calibrations before starting */
 
+				/**
 				comm_encoder_cal.done_cal = 0;
 				comm_encoder_cal.done_ordering = 0;
 				comm_encoder_cal.started = 0;
 				comm_encoder.e_zero = 0;
 				memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));
 				drv_enable_gd(drv);
+				**/
 				break;
 
 		}
@@ -144,16 +148,16 @@
 				/* Don't stop commutating if there are high currents or FW happening */
 				//if( (fabs(controller.i_q_filt)<1.0f) && (fabs(controller.i_d_filt)<1.0f) ){
 					fsmstate->ready = 1;
-					drv_disable_gd(drv);
-					reset_foc(&controller);
-					//printf("Leaving Motor Mode\r\n");
-					HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
+					//drv_disable_gd(drv);
+					//reset_foc(&controller);
+					printf("Leaving Motor Mode (CURRENTLY DISABLED!)\r\n");
+					//HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
 				//}
 				zero_commands(&controller);		// Set commands to zero
 				break;
 			case CALIBRATION_MODE:
-				//printf("Exiting Calibration Mode\r\n");
-				drv_disable_gd(drv);
+				printf("Exiting Calibration Mode (CURRENTLY DISABLED) \r\n");
+				//drv_disable_gd(drv);
 				//free(error_array);
 				//free(lut_array);
 
@@ -196,11 +200,15 @@
 					ps_sample(&comm_encoder, DT);
 					int zero_count = comm_encoder.count;
 					M_ZERO = zero_count;
-					if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-					preference_writer_flush(&prefs);
-					preference_writer_close(&prefs);
-					preference_writer_load(prefs);
+					//if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+					//preference_writer_flush(&prefs);
+					//preference_writer_close(&prefs);
+					//preference_writer_load(prefs);
 					printf("\n\r  Saved new zero position:  %d\n\r\n\r", M_ZERO);
+					break;
+				default:
+					printf("\n\r  INVALID COMMAND \n\r");
+					enter_menu_state();
 					break;
 				}
 			break;
@@ -336,17 +344,17 @@
 			 printf("V_MAX set to %f\r\n", V_MAX);
 			 break;
 		 default:
-			 printf("\n\r '%c' Not a valid command prefix\n\r\n\r", fsmstate->cmd_buff);
+			 printf("\n\r '%s' Not a valid command prefix\n\r\n\r", fsmstate->cmd_buff);
 			 break;
 
 		 }
 
 	 /* Write new settings to flash */
 
-	 if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-	 preference_writer_flush(&prefs);
-	 preference_writer_close(&prefs);
-	 preference_writer_load(prefs);
+	 //if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+	 //preference_writer_flush(&prefs);
+	 //preference_writer_close(&prefs);
+	 //preference_writer_load(prefs);
 
 	 enter_setup_state();
 
