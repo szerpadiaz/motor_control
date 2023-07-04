@@ -7,9 +7,12 @@ This project is based on https://github.com/bgkatz/motorcontrol
 - Import STM32 project and build it
 - Flash device and try it out
 
+## Board connections
+![SW block diagram](./documentation/images/)
+
 ## Description
 
-![SW block diagram](./documentation/images/motor_control_sw_block_diagram.jpg)
+![Board connections](./documentation/images/Board_connections/Board_connections.001.jpeg)
 
 ### The Finite State Machine (FSM) module
 
