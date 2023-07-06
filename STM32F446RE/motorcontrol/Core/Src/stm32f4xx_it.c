@@ -222,19 +222,12 @@ void CAN1_RX0_IRQHandler(void)
   HAL_CAN_IRQHandler(&hcan1);
   /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
 
-  HAL_StatusTypeDef status = HAL_CAN_GetRxMessage(&CAN_H, CAN_RX_FIFO0, &can_rx.rx_header, can_rx.data);
-  if(status == HAL_OK)
-  {
-	  printf("\r\n Got CAN msg: '%d', '%d' ... \n\r", can_rx.data[0], can_rx.data[1]);
-  }
-
-
-  //uint32_t TxMailbox;
-  //pack_reply(&can_tx, CAN_ID,  comm_encoder.angle_multiturn[0]/GR, comm_encoder.velocity/GR, controller.i_q_filt*KT*GR);	// Pack response
-  //HAL_CAN_AddTxMessage(&CAN_H, &can_tx.tx_header, can_tx.data, &TxMailbox);	// Send response
+  HAL_CAN_GetRxMessage(&CAN_H, CAN_RX_FIFO0, &can_rx.rx_header, can_rx.data);	// Read CAN
+  uint32_t TxMailbox;
+  pack_reply(&can_tx, CAN_ID,  comm_encoder.angle_multiturn[0]/GR, comm_encoder.velocity/GR, controller.i_q_filt*KT*GR);	// Pack response
+  HAL_CAN_AddTxMessage(&CAN_H, &can_tx.tx_header, can_tx.data, &TxMailbox);	// Send response
 
   /* Check for special Commands */
-  /*
   if(((can_rx.data[0]==0xFF) & (can_rx.data[1]==0xFF) & (can_rx.data[2]==0xFF) & (can_rx.data[3]==0xFF) & (can_rx.data[4]==0xFF) & (can_rx.data[5]==0xFF) & (can_rx.data[6]==0xFF) & (can_rx.data[7]==0xFC))){
 	  update_fsm(&state, MOTOR_CMD);
       }
@@ -248,7 +241,8 @@ void CAN1_RX0_IRQHandler(void)
 	  unpack_cmd(can_rx, controller.commands);	// Unpack commands
 	  controller.timeout = 0;					// Reset timeout counter
   }
-  */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
 }
 
 /**
@@ -269,7 +263,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	run_fsm(&state);
 
 	/* Check for CAN messages */
-	//can_tx_rx();
+	can_tx_rx();
 
 	/* increment loop count */
 	//controller.loop_count++;
@@ -299,33 +293,17 @@ void USART2_IRQHandler(void)
   /* USER CODE END USART2_IRQn 1 */
 }
 
-
 /* USER CODE BEGIN 1 */
 
 void can_tx_rx(void){
-	uint32_t TxMailbox;
-	can_tx.data[0] = CAN_ID;
-	can_tx.data[1] = 1;
-	can_tx.data[2] = 2;
-	can_tx.data[3] = 3;
-	can_tx.data[4] = 4;
-	can_tx.data[5] = 5;
-	HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&CAN_H, &can_tx.tx_header, can_tx.data, &TxMailbox);
-	printf("\r\n Sending CAN msg, status = %d ... \n\r", status);
 
-	uint32_t tx_level = HAL_CAN_GetTxMailboxesFreeLevel(&CAN_H);
-	uint32_t rx_level = HAL_CAN_GetRxFifoFillLevel(&CAN_H, CAN_RX_FIFO0);
-
-	printf("\r\n tx_level = %ld and rx_level = %ld ... \n\r", tx_level, rx_level);
-	
-	/*
 	int no_mesage = HAL_CAN_GetRxMessage(&CAN_H, CAN_RX_FIFO0, &can_rx.rx_header, can_rx.data);	// Read CAN
 	if(!no_mesage){
 		uint32_t TxMailbox;
 		pack_reply(&can_tx, CAN_ID,  comm_encoder.angle_multiturn[0]/GR, comm_encoder.velocity/GR, controller.i_q_filt*KT*GR);	// Pack response
 		HAL_CAN_AddTxMessage(&CAN_H, &can_tx.tx_header, can_tx.data, &TxMailbox);	// Send response
 
-		// Check for special Commands
+		/* Check for special Commands */
 		if(((can_rx.data[0]==0xFF) & (can_rx.data[1]==0xFF) & (can_rx.data[2]==0xFF) & (can_rx.data[3]==0xFF) & (can_rx.data[4]==0xFF) & (can_rx.data[5]==0xFF) & (can_rx.data[6]==0xFF) & (can_rx.data[7]==0xFC))){
 			  update_fsm(&state, MOTOR_CMD);
 			}
@@ -340,7 +318,7 @@ void can_tx_rx(void){
 			  controller.timeout = 0;					// Reset timeout counter
 		}
 	}
-	*/
+
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

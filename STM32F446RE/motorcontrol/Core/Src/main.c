@@ -201,7 +201,7 @@ int main(void)
   comm_encoder.m_zero = M_ZERO;
   comm_encoder.e_zero = E_ZERO;
   comm_encoder.ppairs = PPAIRS;
-  ps_warmup(&comm_encoder, 100);			// clear the noisy data when the encoder first turns on
+  //ps_warmup(&comm_encoder, 100);			// clear the noisy data when the encoder first turns on
 
   if(EN_ENC_LINEARIZATION){memcpy(&comm_encoder.offset_lut, &ENCODER_LUT, sizeof(comm_encoder.offset_lut));}	// Copy the linearization lookup table
   else{memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));}
@@ -217,6 +217,8 @@ int main(void)
   HAL_GPIO_WritePin(DRV_CS, GPIO_PIN_SET ); 	// CS high
   HAL_GPIO_WritePin(ENABLE_PIN, GPIO_PIN_SET );
   HAL_Delay(1);
+  uint16_t dcr = drv_read_register(drv, DCR);
+
   //drv_calibrate(drv);
   HAL_Delay(1);
   drv_write_DCR(drv, 0x0, DIS_GDF_EN, 0x0, PWM_MODE_3X, 0x0, 0x0, 0x0, 0x0, 0x1);
