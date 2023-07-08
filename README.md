@@ -34,8 +34,10 @@ The diagram below shows the state actions and transitions.
 
 ### Field-Oriented Control (FOC) module
 
-<img src="./documentation/images/FOC_diagram.png" alt="SW block diagram" width="70%">
-<img src="./documentation/images/FOC_formulas.png" alt="SW block diagram" width="70%">
+<p align="center">
+  <img src="./documentation/images/FOC_diagram.png" alt="FOC Diagram" width="49%">
+  <img src="./documentation/images/FOC_formulas.png" alt="FOC Formulas" width="49%">
+</p>
 
 This module  utilizes the Field-Oriented Control technique to regulate torque and speed in three-phase AC motors. The key functions are:
 
