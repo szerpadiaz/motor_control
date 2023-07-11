@@ -95,18 +95,58 @@ Some important functions are:
 
 ### CAN communication module
 
+- **Connection**:
+    - PB8 -> CAN1_RX
+    - PB9 -> CAN1_TX
+
+
+
 The CAN communication module, used for motor control communication, performs the following tasks:
-- **Initialization**:
+- **Initialization**: MX_CAN1_Init(void)
     - Initializes the interface with specific parameters like prescaler, synchronization jump width, and time segments.
     - Configures the receive message structure with filter settings for incoming messages.
 
-- **Transmitting data about the motor controller's position, velocity, and current**:
+- **Transmitting data about the motor controller's position, velocity, and current**: can_tx_init(CANTxMessage *msg)
     - Initializes the transmit message structure with parameters like data length code (DLC), identifier type, remote transmission request (RTR) type, and recipient ID.
     - Packs data into a reply packet by converting the data from floating-point format to the transmit data format.
 
-- **Receiving data such as motor control commands (position, velocity) and control parameters (proportional gain (kp), derivative gain (kd), and feed-forward torque)**:
+    - **CAN Reply Pecket Structure:**
+      -CAN Packet is 5 8-bit words
+      - For each quantity, bit 0 is LSB
+
+      - 16 bit position, between -4*pi and 4*pi
+        - 0: [position[15-8]]
+        - 1: [position[7-0]]
+      - 12 bit velocity, between -30 and + 30 rad/s
+        - 2: [velocity[11-4]]
+        - 3: [velocity[3-0]]
+      - 12 bit current, between -40 and 40;
+        - 3: [current[11-8]]
+        - 4: [current[7-0]]
+
+- **Receiving data such as motor control commands (position, velocity) and control parameters (proportional gain (kp), derivative gain (kd), and feed-forward torque)**: can_rx_init(CANRxMessage *msg)
     - Unpacks received command packets by extracting the data.
     - Converts these values from the received format to floating-point for further processing.
+
+    - **CAN Command Packet Structure:**
+      - CAN Packet is 8 8-bit words
+      - For each quantity, bit 0 is LSB
+    
+      - 16 bit position command, between -4*pi and 4*pi
+          - 0: [position[15-8]]
+          - 1: [position[7-0]]
+      - 12 bit velocity command, between -30 and + 30 rad/s
+          - 2: [velocity[11-4]]
+          - 3: [velocity[3-0]]
+      - 12 bit kp, between 0 and 500 N-m/rad
+          - 3: [kp[11-8]]
+          - 4: [kp[7-0]]
+      - 12 bit kd, between 0 and 100 N-m*s/rad
+          - 5: [kd[11-4]]
+          - 6: [kd[3-0]]
+      - 12 bit feed forward torque, between -18 and 18 N-m
+          - 6: [torque[11-8]]
+          - 7: [torque[7-0]]
 
 ### Serial communication module
 
