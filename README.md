@@ -102,16 +102,17 @@ Some important functions are:
 
 
 The CAN communication module, used for motor control communication, performs the following tasks:
-- **Initialization**: MX_CAN1_Init(void)
+- **Initialization**: **MX_CAN1_Init(void)** **void can_rx_init(CANRxMessage *msg)** **void can_tx_init(CANTxMessage *msg)**
     - Initializes the interface with specific parameters like prescaler, synchronization jump width, and time segments.
     - Configures the receive message structure with filter settings for incoming messages.
 
-- **Transmitting data about the motor controller's position, velocity, and current**: can_tx_init(CANTxMessage *msg)
+- **Transmitting data about the motor controller's position, velocity, and current**: **can_tx_init(CANTxMessage *msg)**
     - Initializes the transmit message structure with parameters like data length code (DLC), identifier type, remote transmission request (RTR) type, and recipient ID.
     - Packs data into a reply packet by converting the data from floating-point format to the transmit data format.
+    - Packed with **void pack_reply(CANTxMessage *msg, uint8_t id, float p, float v, float t)**
 
     - **CAN Reply Pecket Structure:**
-      -CAN Packet is 5 8-bit words
+      - CAN Packet is 5 8-bit words
       - For each quantity, bit 0 is LSB
 
       - 16 bit position, between -4*pi and 4*pi
@@ -124,8 +125,9 @@ The CAN communication module, used for motor control communication, performs the
         - 3: [current[11-8]]
         - 4: [current[7-0]]
 
-- **Receiving data such as motor control commands (position, velocity) and control parameters (proportional gain (kp), derivative gain (kd), and feed-forward torque)**: can_rx_init(CANRxMessage *msg)
+- **Receiving data such as motor control commands (position, velocity) and control parameters (proportional gain (kp), derivative gain (kd), and feed-forward torque)**: **can_rx_init(CANRxMessage *msg)**
     - Unpacks received command packets by extracting the data.
+    - Unpacked with **void unpack_cmd(CANRxMessage msg, float *commands)**
     - Converts these values from the received format to floating-point for further processing.
 
     - **CAN Command Packet Structure:**
