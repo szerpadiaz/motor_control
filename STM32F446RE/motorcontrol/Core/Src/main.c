@@ -38,10 +38,10 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include "stm32f4xx_flash.h"
-//#include "flash_writer.h"
+#include "stm32f4xx_flash.h"
+#include "flash_writer.h"
 #include "position_sensor.h"
-//#include "preference_writer.h"
+#include "preference_writer.h"
 #include "hw_config.h"
 #include "user_config.h"
 #include "fsm.h"
@@ -75,7 +75,7 @@
 /* Flash Registers */
 float __float_reg[64];
 int __int_reg[256];
-//PreferenceWriter prefs;
+PreferenceWriter prefs;
 
 //int count = 0;
 
@@ -155,36 +155,32 @@ int main(void)
   HAL_TIM_Encoder_Start(&TIM_ENCODER, TIM_CHANNEL_ALL);
 
   /* Load settings from flash */
-  //preference_writer_init(&prefs, 6);
-  //preference_writer_load(prefs);
+  preference_writer_init(&prefs, 6);
+  preference_writer_load(prefs);
 
   /* Sanitize configs in case flash is empty*/
   if(E_ZERO==-1){E_ZERO = 0;}
   if(M_ZERO==-1){M_ZERO = 0;}
-  //if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
-  //if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
-  //if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
-  //if(CAN_ID==-1){CAN_ID = 1;}
-  //if(CAN_MASTER==-1){CAN_MASTER = 0;}
-  //if(CAN_TIMEOUT==-1){CAN_TIMEOUT = 1000;}
-  //if(isnan(R_NOMINAL) || R_NOMINAL==-1){R_NOMINAL = 0.0f;}
-  //if(isnan(TEMP_MAX) || TEMP_MAX==-1){TEMP_MAX = 125.0f;}
-  //if(isnan(I_MAX_CONT) || I_MAX_CONT==-1){I_MAX_CONT = 14.0f;}
-  //if(isnan(I_CAL)||I_CAL==-1){I_CAL = 5.0f;}
+  if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
+  if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
+  if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
+  if(CAN_ID==-1){CAN_ID = 1;}
+  if(CAN_MASTER==-1){CAN_MASTER = 0;}
+  if(CAN_TIMEOUT==-1){CAN_TIMEOUT = 1000;}
+  if(isnan(R_NOMINAL) || R_NOMINAL==-1){R_NOMINAL = 0.0f;}
+  if(isnan(TEMP_MAX) || TEMP_MAX==-1){TEMP_MAX = 125.0f;}
+  if(isnan(I_MAX_CONT) || I_MAX_CONT==-1){I_MAX_CONT = 14.0f;}
+  if(isnan(I_CAL)||I_CAL==-1){I_CAL = 5.0f;}
   if(isnan(PPAIRS) || PPAIRS==-1){PPAIRS = 21.0f;}
-  //if(isnan(GR) || GR==-1){GR = 1.0f;}
-  //if(isnan(KT) || KT==-1){KT = 1.0f;}
-  //if(isnan(KP_MAX) || KP_MAX==-1){KP_MAX = 500.0f;}
-  //if(isnan(KD_MAX) || KD_MAX==-1){KD_MAX = 5.0f;}
-  //if(isnan(P_MAX)){P_MAX = 12.5f;}
-  //if(isnan(P_MIN)){P_MIN = -12.5f;}
-  //if(isnan(V_MAX)){V_MAX = 65.0f;}
-  //if(isnan(V_MIN)){V_MIN = -65.0f;}
+  if(isnan(GR) || GR==-1){GR = 1.0f;}
+  if(isnan(KT) || KT==-1){KT = 1.0f;}
+  if(isnan(KP_MAX) || KP_MAX==-1){KP_MAX = 500.0f;}
+  if(isnan(KD_MAX) || KD_MAX==-1){KD_MAX = 5.0f;}
+  if(isnan(P_MAX)){P_MAX = 12.5f;}
+  if(isnan(P_MIN)){P_MIN = -12.5f;}
+  if(isnan(V_MAX)){V_MAX = 65.0f;}
+  if(isnan(V_MIN)){V_MIN = -65.0f;}
 
-  CAN_ID = 1;
-  CAN_MASTER = 0;
-  CAN_TIMEOUT = 1000;
-  
   //printf("\r\nFirmware Version Number: %.2f\r\n", VERSION_NUM);
 
   /* Controller Setup */
@@ -284,7 +280,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ps_print(&comm_encoder, DT);
   }
   /* USER CODE END 3 */
 }
