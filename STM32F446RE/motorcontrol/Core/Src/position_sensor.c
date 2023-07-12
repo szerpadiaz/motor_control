@@ -8,6 +8,7 @@
 #include <string.h>
 #include "position_sensor.h"
 #include "math_ops.h"
+#include "tim.h"
 #include "hw_config.h"
 #include "user_config.h"
 
@@ -32,6 +33,22 @@ void ps_warmup(EncoderStruct * encoder, int n){
 	}
 }
 
+void ps_get_count(EncoderStruct * encoder){
+#if 0
+	/* SPI read/write */
+	encoder->raw = ps_spi_write(encoder, ENC_READ_WORD);
+
+	/* Linearization */
+	int off_1 = encoder->offset_lut[(encoder->raw)>>9];				// lookup table lower entry
+	int off_2 = encoder->offset_lut[((encoder->raw>>9)+1)%128];		// lookup table higher entry
+	int off_interp = off_1 + ((off_2 - off_1)*(encoder->raw - ((encoder->raw>>9)<<9))>>9);     // Interpolate between lookup table entries
+	encoder->count = encoder->raw + off_interp;
+#else
+	encoder->raw =__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+	encoder->count = encoder->raw;
+#endif
+}
+
 void ps_sample(EncoderStruct * encoder, float dt){
 	/* updates EncoderStruct encoder with the latest sample
 	 * after elapsed time dt */
@@ -42,15 +59,7 @@ void ps_sample(EncoderStruct * encoder, float dt){
 	//for(int i = N_POS_SAMPLES-1; i>0; i--){encoder->count_buff[i] = encoder->count_buff[i-1];}
 	//memmove(&encoder->angle_multiturn[1], &encoder->angle_multiturn[0], (N_POS_SAMPLES-1)*sizeof(float)); // this is much slower for some reason
 
-	/* SPI read/write */
-	encoder->raw = ps_spi_write(encoder, ENC_READ_WORD);
-
-	/* Linearization */
-	int off_1 = encoder->offset_lut[(encoder->raw)>>9];				// lookup table lower entry
-	int off_2 = encoder->offset_lut[((encoder->raw>>9)+1)%128];		// lookup table higher entry
-	int off_interp = off_1 + ((off_2 - off_1)*(encoder->raw - ((encoder->raw>>9)<<9))>>9);     // Interpolate between lookup table entries
-	encoder->count = encoder->raw + off_interp;
-
+	ps_get_count(encoder);
 
 	/* Real angles in radians */
 	encoder->angle_singleturn = ((float)(encoder->count-M_ZERO))/((float)ENC_CPR);

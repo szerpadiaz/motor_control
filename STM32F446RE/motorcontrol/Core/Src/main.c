@@ -149,15 +149,18 @@ int main(void)
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_ADC3_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  HAL_TIM_Encoder_Start(&TIM_ENCODER, TIM_CHANNEL_ALL);
 
   /* Load settings from flash */
   //preference_writer_init(&prefs, 6);
   //preference_writer_load(prefs);
 
   /* Sanitize configs in case flash is empty*/
-  //if(E_ZERO==-1){E_ZERO = 0;}
-  //if(M_ZERO==-1){M_ZERO = 0;}
+  if(E_ZERO==-1){E_ZERO = 0;}
+  if(M_ZERO==-1){M_ZERO = 0;}
   //if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
   //if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
   //if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
@@ -168,7 +171,7 @@ int main(void)
   //if(isnan(TEMP_MAX) || TEMP_MAX==-1){TEMP_MAX = 125.0f;}
   //if(isnan(I_MAX_CONT) || I_MAX_CONT==-1){I_MAX_CONT = 14.0f;}
   //if(isnan(I_CAL)||I_CAL==-1){I_CAL = 5.0f;}
-  //if(isnan(PPAIRS) || PPAIRS==-1){PPAIRS = 21.0f;}
+  if(isnan(PPAIRS) || PPAIRS==-1){PPAIRS = 21.0f;}
   //if(isnan(GR) || GR==-1){GR = 1.0f;}
   //if(isnan(KT) || KT==-1){KT = 1.0f;}
   //if(isnan(KP_MAX) || KP_MAX==-1){KP_MAX = 500.0f;}
@@ -281,6 +284,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  ps_print(&comm_encoder, DT);
   }
   /* USER CODE END 3 */
 }

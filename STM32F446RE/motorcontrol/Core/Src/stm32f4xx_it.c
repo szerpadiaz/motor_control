@@ -317,7 +317,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	//analog_sample(&controller);
 
 	/* Sample position sensor */
-	//ps_sample(&comm_encoder, DT);
+	ps_sample(&comm_encoder, DT);
 
 	/* Run Finite State Machine */
 	run_fsm(&state);

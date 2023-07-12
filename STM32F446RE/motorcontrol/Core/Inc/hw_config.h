@@ -2,6 +2,9 @@
 #define HW_CONFIG_H
 
 
+/* Timer encoder */
+#define TIM_ENCODER     htim3
+
 /* Timer and PWM */
 #define TIM_PWM			htim1				// PWM/ISR timer handle
 #define TIM_CH_U		TIM_CHANNEL_1		// Terminal U timer channel
@@ -29,7 +32,7 @@
 /* SPI encoder */
 #define ENC_SPI			hspi3				// Encoder SPI handle
 #define ENC_CS			GPIOA, GPIO_PIN_15	// Encoder SPI CS pin
-#define ENC_CPR			65536				// Encoder counts per revolution
+#define ENC_CPR			8196				// Encoder counts per revolution
 #define INV_CPR			1.0f/ENC_CPR
 #define ENC_READ_WORD	0x00				// Encoder read command
 
