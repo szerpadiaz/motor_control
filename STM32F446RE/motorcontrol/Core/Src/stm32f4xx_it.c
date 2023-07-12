@@ -211,6 +211,66 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
+volatile GPIO_PinState last_state_A = GPIO_PIN_RESET;
+volatile GPIO_PinState last_state_B = GPIO_PIN_RESET;
+
+
+/**
+  * @brief This function handles EXTI line 2 interrupt.
+  */
+void EXTI2_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI2_IRQn 0 */
+
+  /* USER CODE END EXTI2_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+  /* USER CODE BEGIN EXTI2_IRQn 1 */
+
+  // Encoder channel A
+  GPIO_PinState current_state_A = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2);
+  if(current_state_A != last_state_A) {
+	  if(current_state_A == GPIO_PIN_SET)
+	  {
+		  printf("\r\n A up \n\r");
+	  }
+	  else
+	  {
+		  printf("\r\n A down \n\r");
+	  }
+	  last_state_A = current_state_A;
+  }
+
+  /* USER CODE END EXTI2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line 3 interrupt.
+  */
+void EXTI3_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI3_IRQn 0 */
+
+  /* USER CODE END EXTI3_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
+  /* USER CODE BEGIN EXTI3_IRQn 1 */
+
+  // Encoder channel B
+  GPIO_PinState current_state_B = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3);
+  if(current_state_B != last_state_B) {
+	  if(current_state_B == GPIO_PIN_SET)
+	  {
+		  printf("\r\n B up \n\r");
+	  }
+	  else
+	  {
+		  printf("\r\n B down \n\r");
+	  }
+	  last_state_B = current_state_B;
+  }
+
+  /* USER CODE END EXTI3_IRQn 1 */
+}
+
 /**
   * @brief This function handles CAN1 RX0 interrupt.
   */
