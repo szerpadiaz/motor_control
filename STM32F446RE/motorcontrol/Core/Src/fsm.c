@@ -35,7 +35,6 @@
 			 break;
 
 		 case CALIBRATION_MODE:
-			 /**
 			 if(!comm_encoder_cal.done_ordering){
 				 order_phases(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
@@ -43,7 +42,7 @@
 				 calibrate_encoder(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
 			 else{
-				 // Exit calibration mode when done
+				 /* Exit calibration mode when done */
 				 //for(int i = 0; i<128*PPAIRS; i++){printf("%d\r\n", error_array[i]);}
 				 E_ZERO = comm_encoder_cal.ezero;
 				 printf("E_ZERO: %d  %f\r\n", E_ZERO, TWO_PI_F*fmodf((comm_encoder.ppairs*(float)(-E_ZERO))/((float)ENC_CPR), 1.0f));
@@ -56,7 +55,7 @@
 				 preference_writer_load(prefs);
 				 update_fsm(fsmstate, MENU_CMD);
 			 }
-			**/
+
 			 break;
 
 		 case MOTOR_MODE:
@@ -111,17 +110,15 @@
 				//drv_enable_gd(drv);
 				break;
 			case CALIBRATION_MODE:
-				printf("Entering Calibration Mode (CURRENTLY DISABLED!)\r\n");
+				printf("Entering Calibration Mode \r\n");
 				/* zero out all calibrations before starting */
 
-				/**
 				comm_encoder_cal.done_cal = 0;
 				comm_encoder_cal.done_ordering = 0;
 				comm_encoder_cal.started = 0;
 				comm_encoder.e_zero = 0;
 				memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));
 				drv_enable_gd(drv);
-				**/
 				break;
 
 		}
@@ -156,8 +153,8 @@
 				zero_commands(&controller);		// Set commands to zero
 				break;
 			case CALIBRATION_MODE:
-				printf("Exiting Calibration Mode (CURRENTLY DISABLED) \r\n");
-				//drv_disable_gd(drv);
+				printf("Exiting Calibration Mode \r\n");
+				drv_disable_gd(drv);
 				//free(error_array);
 				//free(lut_array);
 
@@ -200,10 +197,10 @@
 					ps_sample(&comm_encoder, DT);
 					int zero_count = comm_encoder.count;
 					M_ZERO = zero_count;
-					//if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-					//preference_writer_flush(&prefs);
-					//preference_writer_close(&prefs);
-					//preference_writer_load(prefs);
+					if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+					preference_writer_flush(&prefs);
+					preference_writer_close(&prefs);
+					preference_writer_load(prefs);
 					printf("\n\r  Saved new zero position:  %d\n\r\n\r", M_ZERO);
 					break;
 				default:
@@ -351,10 +348,10 @@
 
 	 /* Write new settings to flash */
 
-	 //if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-	 //preference_writer_flush(&prefs);
-	 //preference_writer_close(&prefs);
-	 //preference_writer_load(prefs);
+	 if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+	 preference_writer_flush(&prefs);
+	 preference_writer_close(&prefs);
+	 preference_writer_load(prefs);
 
 	 enter_setup_state();
 

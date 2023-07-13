@@ -254,7 +254,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );	// Useful for timing
 	//printf("\r\n TIM1 ... \n\r");
 	/* Sample ADCs */
-	//analog_sample(&controller);
+	analog_sample(&controller);
 
 	/* Sample position sensor */
 	ps_sample(&comm_encoder, DT);
@@ -266,7 +266,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 	can_tx_rx();
 
 	/* increment loop count */
-	//controller.loop_count++;
+	controller.loop_count++;
 	//HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */

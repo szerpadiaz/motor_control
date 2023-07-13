@@ -48,7 +48,7 @@
 #include "drv8323.h"
 #include "foc.h"
 #include "math_ops.h"
-//#include "calibration.h"
+#include "calibration.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,13 +87,13 @@ COMStruct com;
 FSMStruct state;
 EncoderStruct comm_encoder;
 DRVStruct drv;
-//CalStruct comm_encoder_cal;
+CalStruct comm_encoder_cal;
 CANTxMessage can_tx;
 CANRxMessage can_rx;
 
 /* init but don't allocate calibration arrays */
-//int *error_array = NULL;
-//int *lut_array = NULL;
+int *error_array = NULL;
+int *lut_array = NULL;
 
 uint8_t Serial2RxBuffer[1];
 
@@ -194,7 +194,7 @@ int main(void)
   init_controller_params(&controller);
 
   /* calibration "encoder" zeroing */
-  //memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
+  memset(&comm_encoder_cal.cal_position, 0, sizeof(EncoderStruct));
 
   /* commutation encoder setup */
   comm_encoder.m_zero = M_ZERO;
@@ -216,8 +216,6 @@ int main(void)
   HAL_GPIO_WritePin(DRV_CS, GPIO_PIN_SET ); 	// CS high
   HAL_GPIO_WritePin(ENABLE_PIN, GPIO_PIN_SET );
   HAL_Delay(1);
-  uint16_t dcr = drv_read_register(drv, DCR);
-
   //drv_calibrate(drv);
   HAL_Delay(1);
   drv_write_DCR(drv, 0x0, DIS_GDF_EN, 0x0, PWM_MODE_3X, 0x0, 0x0, 0x0, 0x0, 0x1);
@@ -229,7 +227,7 @@ int main(void)
   HAL_Delay(1);
   drv_write_CSACR(drv, 0x0, 0x1, 0x0, CSA_GAIN, 0x1, 0x0, 0x0, 0x0, SEN_LVL_0_25);
   HAL_Delay(1);
-  //zero_current(&controller);
+  zero_current(&controller);
   HAL_Delay(1);
   drv_write_OCPCR(drv, TRETRY_50US, DEADTIME_50NS, OCP_RETRY, OCP_DEG_4US, VDS_LVL_0_45);
   HAL_Delay(1);
@@ -273,7 +271,7 @@ int main(void)
   {
 
 	  HAL_Delay(100);
-	  //drv_print_faults(drv);
+	  drv_print_faults(drv);
 	 // if(state.state==MOTOR_MODE){
 	  	  //printf("%.2f %.2f %.2f %.2f %.2f\r\n", controller.p_des, controller.v_des, controller.kp, controller.kd, controller.t_ff);
 	  //}
