@@ -77,7 +77,7 @@ float __float_reg[64];
 int __int_reg[256];
 PreferenceWriter prefs;
 
-//int count = 0;
+int count = 0;
 
 /* Structs for control, etc */
 
