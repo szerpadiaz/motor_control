@@ -206,7 +206,6 @@ int main(void)
   else{memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));}
   //for(int i = 0; i<128; i++){printf("%d\r\n", comm_encoder.offset_lut[i]);}
 
-  printf("Encoder was initialized \r\n");
   /* Turn on ADCs */
   HAL_ADC_Start(&hadc1);
   HAL_ADC_Start(&hadc2);
@@ -229,12 +228,12 @@ int main(void)
   HAL_Delay(1);
   zero_current(&controller);
   HAL_Delay(1);
-  drv_write_OCPCR(drv, TRETRY_50US, DEADTIME_50NS, OCP_RETRY, OCP_DEG_4US, VDS_LVL_0_45);
+  drv_write_OCPCR(drv, TRETRY_50US, DEADTIME_50NS, OCP_RETRY, OCP_DEG_8US, VDS_LVL_0_45);
   HAL_Delay(1);
   drv_disable_gd(drv);
   HAL_Delay(1);
   //drv_enable_gd(drv);   */
-  //printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
+  printf("ADC A OFFSET: %d     ADC B OFFSET: %d\r\n", controller.adc_a_offset, controller.adc_b_offset);
 
   /* Turn on PWM */
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);

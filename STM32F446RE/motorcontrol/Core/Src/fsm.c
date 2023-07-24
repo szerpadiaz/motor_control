@@ -59,19 +59,17 @@
 			 break;
 
 		 case MOTOR_MODE:
-		 /**
-			 // If CAN has timed out, reset all commands
+			 /* If CAN has timed out, reset all commands */
 			 if((CAN_TIMEOUT > 0 ) && (controller.timeout > CAN_TIMEOUT)){
 				 zero_commands(&controller);
 			 }
-			 // Otherwise, commutate
+			 /* Otherwise, commutate */
 			 else{
 				 torque_control(&controller);
 				 field_weaken(&controller);
 				 commutate(&controller, &comm_encoder);
 			 }
 			 controller.timeout ++;
-		*/
 			 break;
 
 		 case SETUP_MODE:
@@ -104,10 +102,20 @@
 				printf("Entering Encoder Mode\r\n");
 				break;
 			case MOTOR_MODE:
-				printf("Entering Motor Mode (CURRENTLY DISABLED!)\r\n");
-				//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
-				//reset_foc(&controller);
-				//drv_enable_gd(drv);
+				printf("Entering Motor Mode \r\n");
+				HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
+				reset_foc(&controller);
+				 controller.p_des = 2.0;
+				 //controller.v_des = 0.0;
+				 //controller.kp = 0.0;
+				 //controller.kd = 0.0;
+				 //controller.t_ff = 0.0;
+				 //controller.i_q_des = 0.0;
+				 printf("set points:");
+				 printf("p_des = %.3f  v_des = %.3f  kp = %.3f  kd = %.3f  t_ff = %.3f  i_q_ref =  %.3f", controller.p_des, controller.v_des, controller.kp, controller.kd, controller.t_ff, controller.i_q_des);
+				 printf("\n\r");
+
+				drv_enable_gd(drv);
 				break;
 			case CALIBRATION_MODE:
 				printf("Entering Calibration Mode \r\n");
@@ -145,10 +153,10 @@
 				/* Don't stop commutating if there are high currents or FW happening */
 				//if( (fabs(controller.i_q_filt)<1.0f) && (fabs(controller.i_d_filt)<1.0f) ){
 					fsmstate->ready = 1;
-					//drv_disable_gd(drv);
-					//reset_foc(&controller);
-					printf("Leaving Motor Mode (CURRENTLY DISABLED!)\r\n");
-					//HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
+					drv_disable_gd(drv);
+					reset_foc(&controller);
+					printf("Leaving Motor Mode\r\n");
+					HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
 				//}
 				zero_commands(&controller);		// Set commands to zero
 				break;
