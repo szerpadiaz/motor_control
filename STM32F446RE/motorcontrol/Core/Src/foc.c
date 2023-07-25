@@ -12,6 +12,8 @@
 #include "math_ops.h"
 #include "hw_config.h"
 #include "user_config.h"
+#include <stdio.h>
+#include <string.h>
 
 void set_dtc(ControllerStruct *controller){
 
@@ -64,6 +66,10 @@ void analog_sample (ControllerStruct *controller){
     controller->i_b = controller->i_scale*(float)(controller->adc_b_raw - controller->adc_b_offset);
     controller->i_c = -controller->i_a - controller->i_b;
 
+    //printf("v_bus_raw = %d ; v_bus = %.3f \r\n", controller->adc_vbus_raw, controller->v_bus);
+    //printf("i_a_raw = %d ; i_a = %.3f \r\n", controller->adc_a_raw , controller->i_a);
+    //printf("i_b_raw = %d ; i_b = %.3f \r\n", controller->adc_b_raw , controller->i_b);
+    //printf("i_c = %.3f \r\n", controller->i_c);
 }
 
 void abc( float theta, float d, float q, float *a, float *b, float *c){
@@ -136,7 +142,7 @@ void init_controller_params(ControllerStruct *controller){
     controller->alpha = 1.0f - 1.0f/(1.0f - DT*I_BW*TWO_PI_F);
     controller->ki_fw = .1f*controller->ki_d;
     controller->phase_order = PHASE_ORDER;
-    controller->flux_linkage = KT/(1.5f*PPAIRS);
+    controller->flux_linkage = KT/(1.5f*PPAIRS); // KT = WB*NPP*3/2 (WB: flux_linkage)
     if(I_MAX <= 40.0f){controller->i_scale = I_SCALE;}
     else{controller->i_scale = 2.0f*I_SCALE;}
     for(int i = 0; i<128; i++)	// Approximate duty cycle linearization

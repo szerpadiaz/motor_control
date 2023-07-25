@@ -65,9 +65,23 @@
 			 }
 			 /* Otherwise, commutate */
 
-			 torque_control(&controller);
-			 field_weaken(&controller);
-			 commutate(&controller, &comm_encoder);
+			  //controller.p_des = 0.0001f;
+			  //controller.v_des = 1.0f;
+			  //controller.kp = 10.0f;
+			  //controller.kd = 1.0f;
+			  //controller.t_ff = 0.0;
+
+			 //torque_control(&controller);
+			 //field_weaken(&controller);
+			 //commutate(&controller, &comm_encoder);
+
+			 // Temporal demo
+	    	 // rotate voltage vector through one mechanical rotation in the positive direction
+			 float speed = 100.0f; // rad/s
+			 fsmstate->ref_position.elec_angle += speed*DT;
+	         controller.i_d_des = I_MAX;
+	         controller.i_q_des = 0.0f;
+			 commutate(&controller, &fsmstate->ref_position);
 
 			 controller.timeout ++;
 			 break;
@@ -105,17 +119,9 @@
 				printf("Entering Motor Mode \r\n");
 				HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
 				reset_foc(&controller);
-				 controller.p_des = 2.0;
-				 //controller.v_des = 0.0;
-				 //controller.kp = 0.0;
-				 //controller.kd = 0.0;
-				 //controller.t_ff = 0.0;
-				 //controller.i_q_des = 0.0;
-				 printf("set points:");
-				 printf("p_des = %.3f  v_des = %.3f  kp = %.3f  kd = %.3f  t_ff = %.3f  i_q_ref =  %.3f", controller.p_des, controller.v_des, controller.kp, controller.kd, controller.t_ff, controller.i_q_des);
-				 printf("\n\r");
-
 				drv_enable_gd(drv);
+				// Set voltage angle to zero, wait for rotor position to settle
+				fsmstate->ref_position.elec_angle = 0;
 				break;
 			case CALIBRATION_MODE:
 				printf("Entering Calibration Mode \r\n");
@@ -265,14 +271,14 @@
 	    printf(" %-4s %-31s %-5s %-6s %.5f\n\r", "k", "Torque Constant (N-m/A)", "0", "-", KT);
 	    printf("\r\n Control:\r\n");
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "b", "Current Bandwidth (Hz)", "100", "2000", I_BW);
-	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "l", "Current Limit (A)", "0.0", "75.0", I_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "l", "Current Limit (A)", "0.0", "5.0", I_MAX); // video 4A
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "p", "Max Position Setpoint (rad)", "-", "-", P_MAX);
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "v", "Max Velocity Setpoint (rad)/s", "-", "-", V_MAX);
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "x", "Max Position Gain (N-m/rad)", "0.0", "1000.0", KP_MAX);
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "d", "Max Velocity Gain (N-m/rad/s)", "0.0", "5.0", KD_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "f", "FW Current Limit (A)", "0.0", "33.0", I_FW_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "f", "FW Current Limit (A)", "0.0", "4.0", I_FW_MAX); // video: 3A
 	    //printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "h", "Temp Cutoff (C) (0 = none)", "0", "150", TEMP_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "c", "Continuous Current (A)", "0.0", "40.0", I_MAX_CONT);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "c", "Continuous Current (A)", "0.0", "4.0", I_MAX_CONT); // Video 4A
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "a", "Calibration Current (A)", "0.0", "20.0", I_CAL);
 	    printf("\r\n CAN:\r\n");
 	    printf(" %-4s %-31s %-5s %-6s %-5i\n\r", "i", "CAN ID", "0", "127", CAN_ID);
@@ -299,11 +305,11 @@
 			 printf("CAN_TX_ID set to %d\r\n", CAN_MASTER);
 			 break;
 		 case 'l':
-			 I_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 75.0f), 0.0f);
+			 I_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 5.0f), 0.0f);
 			 printf("I_MAX set to %f\r\n", I_MAX);
 			 break;
 		 case 'f':
-			 I_FW_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 33.0f), 0.0f);
+			 I_FW_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 4.0f), 0.0f);
 			 printf("I_FW_MAX set to %f\r\n", I_FW_MAX);
 			 break;
 		 case 't':
@@ -315,7 +321,7 @@
 			 printf("TEMP_MAX set to %f\r\n", TEMP_MAX);
 			 break;
 		 case 'c':
-			 I_MAX_CONT = fmaxf(fminf(atof(fsmstate->cmd_buff), 40.0f), 0.0f);
+			 I_MAX_CONT = fmaxf(fminf(atof(fsmstate->cmd_buff), 4.0f), 0.0f);
 			 printf("I_MAX_CONT set to %f\r\n", I_MAX_CONT);
 			 break;
 		 case 'a':

@@ -32,6 +32,8 @@ extern "C" {
 #define ENTER_CMD			13
 
 
+#include "position_sensor.h"
+
 
 typedef struct{
 	uint8_t state;
@@ -41,6 +43,10 @@ typedef struct{
 	char cmd_buff[8];
 	char bytecount;
 	char cmd_id;
+
+	// reference position for motor mode (temporal demo)
+	EncoderStruct ref_position;
+
 }FSMStruct;
 
 void run_fsm(FSMStruct* fsmstate);

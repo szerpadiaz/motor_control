@@ -284,7 +284,7 @@ void USART2_IRQHandler(void)
 	HAL_UART_IRQHandler(&huart2);
 
 	char c = Serial2RxBuffer[0];
-	printf("\r\n Got cmd '%c', updating FSM ... \n\r", c);
+	//printf("\r\n Got cmd '%c', updating FSM ... \n\r", c);
 	update_fsm(&state, c);
 
   /* USER CODE END USART2_IRQn 0 */
