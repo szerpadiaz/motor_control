@@ -35,7 +35,6 @@
 			 break;
 
 		 case CALIBRATION_MODE:
-			 /**
 			 if(!comm_encoder_cal.done_ordering){
 				 order_phases(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
@@ -43,7 +42,7 @@
 				 calibrate_encoder(&comm_encoder, &controller, &comm_encoder_cal, controller.loop_count);
 			 }
 			 else{
-				 // Exit calibration mode when done
+				 /* Exit calibration mode when done */
 				 //for(int i = 0; i<128*PPAIRS; i++){printf("%d\r\n", error_array[i]);}
 				 E_ZERO = comm_encoder_cal.ezero;
 				 printf("E_ZERO: %d  %f\r\n", E_ZERO, TWO_PI_F*fmodf((comm_encoder.ppairs*(float)(-E_ZERO))/((float)ENC_CPR), 1.0f));
@@ -56,23 +55,35 @@
 				 preference_writer_load(prefs);
 				 update_fsm(fsmstate, MENU_CMD);
 			 }
-			**/
+
 			 break;
 
 		 case MOTOR_MODE:
-		 /**
-			 // If CAN has timed out, reset all commands
+			 /* If CAN has timed out, reset all commands */
 			 if((CAN_TIMEOUT > 0 ) && (controller.timeout > CAN_TIMEOUT)){
 				 zero_commands(&controller);
 			 }
-			 // Otherwise, commutate
-			 else{
-				 torque_control(&controller);
-				 field_weaken(&controller);
-				 commutate(&controller, &comm_encoder);
-			 }
+			 /* Otherwise, commutate */
+
+			  //controller.p_des = 0.0001f;
+			  //controller.v_des = 1.0f;
+			  //controller.kp = 10.0f;
+			  //controller.kd = 1.0f;
+			  //controller.t_ff = 0.0;
+
+			 //torque_control(&controller);
+			 //field_weaken(&controller);
+			 //commutate(&controller, &comm_encoder);
+
+			 // Temporal demo
+	    	 // rotate voltage vector through one mechanical rotation in the positive direction
+			 float speed = 100.0f; // rad/s
+			 fsmstate->ref_position.elec_angle += speed*DT;
+	         controller.i_d_des = I_MAX;
+	         controller.i_q_des = 0.0f;
+			 commutate(&controller, &fsmstate->ref_position);
+
 			 controller.timeout ++;
-		*/
 			 break;
 
 		 case SETUP_MODE:
@@ -105,23 +116,23 @@
 				printf("Entering Encoder Mode\r\n");
 				break;
 			case MOTOR_MODE:
-				printf("Entering Motor Mode (CURRENTLY DISABLED!)\r\n");
-				//HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
-				//reset_foc(&controller);
-				//drv_enable_gd(drv);
+				printf("Entering Motor Mode \r\n");
+				HAL_GPIO_WritePin(LED, GPIO_PIN_SET );
+				reset_foc(&controller);
+				drv_enable_gd(drv);
+				// Set voltage angle to zero, wait for rotor position to settle
+				fsmstate->ref_position.elec_angle = 0;
 				break;
 			case CALIBRATION_MODE:
-				printf("Entering Calibration Mode (CURRENTLY DISABLED!)\r\n");
+				printf("Entering Calibration Mode \r\n");
 				/* zero out all calibrations before starting */
 
-				/**
 				comm_encoder_cal.done_cal = 0;
 				comm_encoder_cal.done_ordering = 0;
 				comm_encoder_cal.started = 0;
 				comm_encoder.e_zero = 0;
 				memset(&comm_encoder.offset_lut, 0, sizeof(comm_encoder.offset_lut));
 				drv_enable_gd(drv);
-				**/
 				break;
 
 		}
@@ -148,16 +159,16 @@
 				/* Don't stop commutating if there are high currents or FW happening */
 				//if( (fabs(controller.i_q_filt)<1.0f) && (fabs(controller.i_d_filt)<1.0f) ){
 					fsmstate->ready = 1;
-					//drv_disable_gd(drv);
-					//reset_foc(&controller);
-					printf("Leaving Motor Mode (CURRENTLY DISABLED!)\r\n");
-					//HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
+					drv_disable_gd(drv);
+					reset_foc(&controller);
+					printf("Leaving Motor Mode\r\n");
+					HAL_GPIO_WritePin(LED, GPIO_PIN_RESET );
 				//}
 				zero_commands(&controller);		// Set commands to zero
 				break;
 			case CALIBRATION_MODE:
-				printf("Exiting Calibration Mode (CURRENTLY DISABLED) \r\n");
-				//drv_disable_gd(drv);
+				printf("Exiting Calibration Mode \r\n");
+				drv_disable_gd(drv);
 				//free(error_array);
 				//free(lut_array);
 
@@ -200,10 +211,10 @@
 					ps_sample(&comm_encoder, DT);
 					int zero_count = comm_encoder.count;
 					M_ZERO = zero_count;
-					//if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-					//preference_writer_flush(&prefs);
-					//preference_writer_close(&prefs);
-					//preference_writer_load(prefs);
+					if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+					preference_writer_flush(&prefs);
+					preference_writer_close(&prefs);
+					preference_writer_load(prefs);
 					printf("\n\r  Saved new zero position:  %d\n\r\n\r", M_ZERO);
 					break;
 				default:
@@ -259,16 +270,16 @@
 	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "g", "Gear Ratio", "0", "-", GR);
 	    printf(" %-4s %-31s %-5s %-6s %.5f\n\r", "k", "Torque Constant (N-m/A)", "0", "-", KT);
 	    printf("\r\n Control:\r\n");
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "b", "Current Bandwidth (Hz)", "100", "2000", I_BW);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "l", "Current Limit (A)", "0.0", "60.0", I_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "p", "Max Position Setpoint (rad)", "-", "-", P_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "v", "Max Velocity Setpoint (rad)/s", "-", "-", V_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "x", "Max Position Gain (N-m/rad)", "0.0", "1000.0", KP_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "d", "Max Velocity Gain (N-m/rad/s)", "0.0", "5.0", KD_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "f", "FW Current Limit (A)", "0.0", "33.0", I_FW_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "b", "Current Bandwidth (Hz)", "100", "2000", I_BW);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "l", "Current Limit (A)", "0.0", "5.0", I_MAX); // video 4A
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "p", "Max Position Setpoint (rad)", "-", "-", P_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "v", "Max Velocity Setpoint (rad)/s", "-", "-", V_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "x", "Max Position Gain (N-m/rad)", "0.0", "1000.0", KP_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "d", "Max Velocity Gain (N-m/rad/s)", "0.0", "5.0", KD_MAX);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "f", "FW Current Limit (A)", "0.0", "4.0", I_FW_MAX); // video: 3A
 	    //printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "h", "Temp Cutoff (C) (0 = none)", "0", "150", TEMP_MAX);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "c", "Continuous Current (A)", "0.0", "40.0", I_MAX_CONT);
-	    printf(" %-4s %-31s %-5s %-6s %.1f\n\r", "a", "Calibration Current (A)", "0.0", "20.0", I_CAL);
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "c", "Continuous Current (A)", "0.0", "4.0", I_MAX_CONT); // Video 4A
+	    printf(" %-4s %-31s %-5s %-6s %.3f\n\r", "a", "Calibration Current (A)", "0.0", "20.0", I_CAL);
 	    printf("\r\n CAN:\r\n");
 	    printf(" %-4s %-31s %-5s %-6s %-5i\n\r", "i", "CAN ID", "0", "127", CAN_ID);
 	    printf(" %-4s %-31s %-5s %-6s %-5i\n\r", "m", "CAN TX ID", "0", "127", CAN_MASTER);
@@ -294,11 +305,11 @@
 			 printf("CAN_TX_ID set to %d\r\n", CAN_MASTER);
 			 break;
 		 case 'l':
-			 I_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 60.0f), 0.0f);
+			 I_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 5.0f), 0.0f);
 			 printf("I_MAX set to %f\r\n", I_MAX);
 			 break;
 		 case 'f':
-			 I_FW_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 33.0f), 0.0f);
+			 I_FW_MAX = fmaxf(fminf(atof(fsmstate->cmd_buff), 4.0f), 0.0f);
 			 printf("I_FW_MAX set to %f\r\n", I_FW_MAX);
 			 break;
 		 case 't':
@@ -310,7 +321,7 @@
 			 printf("TEMP_MAX set to %f\r\n", TEMP_MAX);
 			 break;
 		 case 'c':
-			 I_MAX_CONT = fmaxf(fminf(atof(fsmstate->cmd_buff), 40.0f), 0.0f);
+			 I_MAX_CONT = fmaxf(fminf(atof(fsmstate->cmd_buff), 4.0f), 0.0f);
 			 printf("I_MAX_CONT set to %f\r\n", I_MAX_CONT);
 			 break;
 		 case 'a':
@@ -351,10 +362,10 @@
 
 	 /* Write new settings to flash */
 
-	 //if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
-	 //preference_writer_flush(&prefs);
-	 //preference_writer_close(&prefs);
-	 //preference_writer_load(prefs);
+	 if (!preference_writer_ready(prefs)){ preference_writer_open(&prefs);}
+	 preference_writer_flush(&prefs);
+	 preference_writer_close(&prefs);
+	 preference_writer_load(prefs);
 
 	 enter_setup_state();
 

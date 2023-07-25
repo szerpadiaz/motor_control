@@ -2,6 +2,9 @@
 #define HW_CONFIG_H
 
 
+/* Timer encoder */
+#define TIM_ENCODER     htim3
+
 /* Timer and PWM */
 #define TIM_PWM			htim1				// PWM/ISR timer handle
 #define TIM_CH_U		TIM_CHANNEL_1		// Terminal U timer channel
@@ -29,7 +32,7 @@
 /* SPI encoder */
 #define ENC_SPI			hspi3				// Encoder SPI handle
 #define ENC_CS			GPIOA, GPIO_PIN_15	// Encoder SPI CS pin
-#define ENC_CPR			65536				// Encoder counts per revolution
+#define ENC_CPR			20000 //8196				// Encoder counts per revolution
 #define INV_CPR			1.0f/ENC_CPR
 #define ENC_READ_WORD	0x00				// Encoder read command
 
@@ -40,24 +43,24 @@
 #define CAN_H			hcan1				// CAN handle
 
 /* Other hardware-related constants */
-#define I_SCALE 			0.0201416f  // Amps per A/D Count at 40X amplifier gain
-#define V_SCALE 			0.0128906f    // Bus volts per A/D Count
+#define I_SCALE 			0.00201416f  // Amps per A/D Count at 40X amplifier gain
+#define V_SCALE 			0.00586081f    // Bus volts per A/D Count
 #define DTC_MAX 			0.94f          	// Max duty cycle
 #define DTC_MIN 			0.0f          	// Min duty cycle
 #define DTC_COMP 			0.000f          // deadtime compensation (100 ns / 25 us)
 #define DT					.000025f		// Loop period
-#define EN_ENC_LINEARIZATION 1				// Enable/disable encoder linearization
-
+#define EN_ENC_LINEARIZATION 0				// Enable/disable encoder linearization
+#define V_BUS_MAX			40.0f			// max drive voltage (faults above this)
 
 /* Current controller */
-#define L_D .000003f				// D axis inductance
-#define L_Q .000003f				// Q axis inductance
-#define K_D .05f                    // Loop gain,  Volts/Amp
-#define K_Q .05f                    // Loop gain,  Volts/Amp
-#define K_SCALE 0.0001f             // K_loop/Loop BW (Hz) 0.0042
+#define L_D .00004f				// D axis inductance (MOTOR CONFIG)
+#define L_Q .00004f				// Q axis inductance (MOTOR CONFIG)
+#define K_D .1f                    // Loop gain,  Volts/Amp
+#define K_Q .1f                    // Loop gain,  Volts/Amp
+#define K_SCALE 0.00012f             // K_loop/Loop BW (Hz) 0.0042
 #define KI_D 0.045f                // PI zero, in radians per sample
 #define KI_Q 0.045f                // PI zero, in radians per sample
-#define OVERMODULATION 1.15f        // 1.0 = no overmodulation
+#define OVERMODULATION 1.0f        // 1.0 = no overmodulation
 #define CURRENT_FILT_ALPHA	.1f	// 1st order d/q current filter (not used in control)
 #define VBUS_FILT_ALPHA		.1f		// 1st order bus voltage filter
 
