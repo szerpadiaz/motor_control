@@ -38,15 +38,15 @@ void ps_get_count(EncoderStruct * encoder){
 	/* SPI read/write */
 	encoder->raw = ps_spi_write(encoder, ENC_READ_WORD);
 
+#else
+	encoder->raw =__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+#endif
+
 	/* Linearization */
 	int off_1 = encoder->offset_lut[(encoder->raw)>>9];				// lookup table lower entry
 	int off_2 = encoder->offset_lut[((encoder->raw>>9)+1)%128];		// lookup table higher entry
 	int off_interp = off_1 + ((off_2 - off_1)*(encoder->raw - ((encoder->raw>>9)<<9))>>9);     // Interpolate between lookup table entries
 	encoder->count = encoder->raw + off_interp;
-#else
-	encoder->raw =__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-	encoder->count = encoder->raw;
-#endif
 }
 
 void ps_sample(EncoderStruct * encoder, float dt){

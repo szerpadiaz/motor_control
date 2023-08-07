@@ -162,7 +162,7 @@ int main(void)
   if(E_ZERO==-1){E_ZERO = 0;}
   if(M_ZERO==-1){M_ZERO = 0;}
   if(isnan(I_BW) || I_BW==-1){I_BW = 1000;}
-  if(isnan(I_MAX) || I_MAX ==-1){I_MAX=40;}
+  if(isnan(I_MAX) || I_MAX ==-1){I_MAX=4;}
   if(isnan(I_FW_MAX) || I_FW_MAX ==-1){I_FW_MAX=0;}
   if(CAN_ID==-1){CAN_ID = 1;}
   if(CAN_MASTER==-1){CAN_MASTER = 0;}
