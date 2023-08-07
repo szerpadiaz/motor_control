@@ -149,7 +149,7 @@ void init_controller_params(ControllerStruct *controller){
     {
         controller->inverter_tab[i] = 1.0f + 1.2f*exp(-0.0078125f*i/.032f);
     }
-
+    controller->i_max = I_MAX;
     }
 
 void reset_foc(ControllerStruct *controller){
@@ -222,7 +222,13 @@ float linearize_dtc(ControllerStruct *controller, float dtc)
 
 void field_weaken(ControllerStruct *controller)
 {
-       /// Field Weakening ///
+	// Field Weakening
+	// fw_int: Field Weakening Integral Term
+	//         fw_int += ki_fw * (v_max - 1.0f - v_ref)
+	//         fw_int = max(min(fw_int, 0.0f), -I_FW_MAX)
+	// Modify q-axis current set point based on Field Weakening Integral Term
+	//         i_q_des = i_q_des + (i_q_des > 0) * fw_int + (i_q_des < 0) *
+    // Limit q-axis current to maintain feasible current vector (i_max constraint)
 
        controller->fw_int += controller->ki_fw*(controller->v_max - 1.0f - controller->v_ref);
        controller->fw_int = fast_fmaxf(fast_fminf(controller->fw_int, 0.0f), -I_FW_MAX);
@@ -230,8 +236,6 @@ void field_weaken(ControllerStruct *controller)
        controller->i_d_des = controller->fw_int;
        float q_max = sqrtf(controller->i_max*controller->i_max - controller->i_d_des*controller->i_d_des);
        controller->i_q_des = fast_fmaxf(fast_fminf(controller->i_q_des, q_max), -q_max);
-
-
 }
 void commutate(ControllerStruct *controller, EncoderStruct *encoder)
 {
@@ -293,6 +297,13 @@ void commutate(ControllerStruct *controller, EncoderStruct *encoder)
 
 
 void torque_control(ControllerStruct *controller){
+	// t_ff_filt: Filtered torque feedforward term
+	// torque_des = kp * (p_des - theta_mech) + t_ff_filt + kd * (v_des - dtheta_mech)
+    // i_q_des:
+	//   - Limit the q-axis current based on torque_des and motor parameters
+    //   - Limit the q-axis current to zero if the bus voltage exceeds V_BUS_MAX
+    // Set the d-axis current to zero
+
 	controller->t_ff_filt = 0.9f*controller->t_ff_filt + 0.1f*controller->t_ff;
     float torque_des = controller->kp*(controller->p_des - controller->theta_mech) + controller->t_ff_filt + controller->kd*(controller->v_des - controller->dtheta_mech);
     controller->i_q_des = fast_fmaxf(fast_fminf(torque_des/(KT*GR), controller->i_max), -controller->i_max);

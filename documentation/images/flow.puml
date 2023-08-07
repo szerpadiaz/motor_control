@@ -1,0 +1,27 @@
+@startuml
+participant "CAN Interrupt" as CAN
+participant "FSM" as FSM
+participant "TIMER Interrupt" as TIM
+participant "FOC" as FOC
+participant "Position sensor" as Encoder
+
+ -> CAN : Receive CAN message
+CAN -> FSM : Enter Motor mode
+
+FSM -> FSM : enable motor driver
+
+TIM -> FOC : Sample ADCs
+TIM -> Encoder : Sample position sensor
+TIM -> FSM : Run FSM
+FSM -> FOC : torque_conctrol()
+FSM -> FOC : field_weaken()
+FSM -> FOC : commutate()
+
+ -> CAN : Receive CAN message
+CAN -> FOC : Update set points (p,v,t,kp,kd)
+CAN -> CAN : Send controller status
+
+ -> CAN : Receive CAN message
+CAN -> FSM : Exit Motor mode
+FSM -> FSM : disable motor driver
+@enduml

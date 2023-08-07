@@ -64,17 +64,12 @@
 				 zero_commands(&controller);
 			 }
 			 /* Otherwise, commutate */
-
-			  //controller.p_des = 0.0001f;
-			  //controller.v_des = 1.0f;
-			  //controller.kp = 10.0f;
-			  //controller.kd = 1.0f;
-			  //controller.t_ff = 0.0;
-
-			 //torque_control(&controller);
-			 //field_weaken(&controller);
-			 //commutate(&controller, &comm_encoder);
-
+			#if 0
+			// Original implementation (temporally disabled for the demo)
+			 torque_control(&controller);
+			 field_weaken(&controller);
+			 commutate(&controller, &comm_encoder);
+			#else
 			 // Temporal demo
 	    	 // rotate voltage vector through one mechanical rotation in the positive direction
 			 float speed = 100.0f; // rad/s
@@ -82,6 +77,7 @@
 	         controller.i_d_des = I_MAX;
 	         controller.i_q_des = 0.0f;
 			 commutate(&controller, &fsmstate->ref_position);
+			#endif
 
 			 controller.timeout ++;
 			 break;
