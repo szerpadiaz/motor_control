@@ -12,10 +12,14 @@ The diagrams that follow depict the software architecture and the implementation
 
 <img src="./documentation/images/Board_connections/Board_connections.001.jpeg" alt="System overview" width="70%"/>
 
+## System Architecture
 <img src="./documentation/images/motor_control_sw_block_diagram.png" alt="System Architecture" width="70%"/>
 
+## Finite State Machine
 <img src="./documentation/images/FSM.png" alt="Finite State Machine" width="70%"/>
 
+## Sequence diagram for motor control
 <img src="./documentation/images/flow_diagram.png" alt="Sequence diagram for motor control" width="50%"/>
 
+## FOC module
 <img src="./documentation/images/FOC_diagram.png" alt="FOC module" width="70%"/>
