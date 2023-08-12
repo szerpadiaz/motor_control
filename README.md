@@ -16,6 +16,6 @@ The diagrams that follow depict the software architecture and the implementation
 
 <img src="./documentation/images/FSM.png" alt="Finite State Machine" width="70%"/>
 
-<img src="./documentation/images/flow_diagram.png" alt="Sequence diagram for motor control" width="70%"/>
+<img src="./documentation/images/flow_diagram.png" alt="Sequence diagram for motor control" width="50%"/>
 
 <img src="./documentation/images/FOC_diagram.png" alt="FOC module" width="70%"/>
