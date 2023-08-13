@@ -3,7 +3,7 @@ The main motivation behind this embedded project is to explore the functionaliti
 
 <img src="./Image & Video/System 1.jpeg" alt="Final system" width="70%"/>
 
-[Video demonstation](https://gitlab.lrz.de/dodo/motor_control/-/blob/main/Image%20%26%20Video/Motor%20mode.mp4)
+[![Video demonstation](http://img.youtube.com/vi/ONfufkdLfSs/0.jpg)](http://www.youtube.com/watch?v=ONfufkdLfSs "Video Title")
 
 
 # System overview
