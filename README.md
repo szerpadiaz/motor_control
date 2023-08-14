@@ -6,7 +6,7 @@ The main motivation behind this embedded project is to explore the functionaliti
 
 # System overview
 
-The diagrams that follow depict the software architecture and the implementation of the system. For an extended documentation, refer to ...
+The diagrams that follow depict the software architecture and the implementation of the system. For an extended documentation, refer to [final_report](./documentation/final_report.pdf)
 
 ## Board connections
 <img src="./documentation/images/Board_connections/Board_connections.001.jpeg" alt="System overview" width="70%"/>
